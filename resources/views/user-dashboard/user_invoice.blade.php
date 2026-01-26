@@ -11,41 +11,30 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         
         @media print {
-            /* Sembunyikan elemen yang tidak perlu saat cetak */
             .no-print { display: none !important; }
-            
-            /* Reset background dan bayangan untuk printer */
             body { background: white !important; padding: 0 !important; }
             .print-shadow-none { box-shadow: none !important; border: 1px solid #f1f5f9 !important; margin: 0 !important; max-width: 100% !important; }
-            
-            /* Pastikan warna latar belakang (Slate 900) tetap tercetak */
             .bg-slate-900 { background-color: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .text-white { color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .bg-blue-600 { background-color: #2563eb !important; -webkit-print-color-adjust: exact; }
-            
-            @page {
-                size: auto;
-                margin: 0mm;
-            }
+            @page { size: auto; margin: 0mm; }
         }
     </style>
 </head>
 <body class="bg-slate-100 py-12 px-4 selection:bg-blue-100">
 
-    {{-- Container Utama --}}
-    <div class="max-w-2xl mx-auto bg-white rounded-[2rem] shadow-2xl shadow-slate-200/60 overflow-hidden relative print-shadow-none">
-        
-        {{-- Floating Action (No Print) --}}
-        <div class="absolute top-8 right-8 no-print flex gap-2">
-            {{-- Tombol PDF/Print (Sama fungsinya karena browser modern "Print" bisa save as PDF) --}}
-            <button onclick="window.print()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-500/30">
-                <i class="fa-solid fa-file-pdf"></i> Simpan PDF / Print
-            </button>
-            <a href="{{ route('billing.history') }}" class="flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
-        </div>
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 no-print flex gap-3 w-full max-w-md px-4">
+        <a href="{{ route('billing.history') }}" class="flex-1 flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-4 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all hover:bg-slate-50 shadow-xl active:scale-95">
+            <i class="fa-solid fa-arrow-left"></i> Kembali
+        </a>
+        <button onclick="window.print()" class="flex-[2] flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-4 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-blue-500/30 active:scale-95">
+            <i class="fa-solid fa-file-pdf text-base"></i> Simpan PDF / Cetak
+        </button>
+    </div>
 
+    {{-- Container Utama --}}
+    <div class="max-w-2xl mx-auto bg-white rounded-[2rem] shadow-2xl shadow-slate-200/60 overflow-hidden relative print-shadow-none mb-20">
+        
         {{-- Top Header - Branding --}}
         <div class="bg-slate-900 p-12 text-white relative overflow-hidden">
             {{-- Background Accent --}}
