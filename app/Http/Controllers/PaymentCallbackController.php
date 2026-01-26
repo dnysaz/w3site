@@ -46,36 +46,33 @@ class PaymentCallbackController extends Controller
 
         // 3. LOGIKA BERDASARKAN STATUS PAYMENKU
         if ($status === 'paid') {
-            
-            // Cek jika sudah pernah diproses (idempotency) agar tidak kirim email berkali-kali
+    
             if (in_array($transaction->transaction_status, ['settlement', 'paid'])) {
-                return response()->json(['message' => 'Transaksi ini sudah diproses sebelumnya'], 200);
+                return response()->json(['message' => 'Sudah diproses'], 200);
             }
-
-            // Ambil package_id dari transaksi
-            $packageId = $transaction->package_id; 
-
-            // Hitung Masa Aktif
-            $currentExpiredAt = $user->package_expired_at ? Carbon::parse($user->package_expired_at) : null;
-            
-            if ($user->package == $packageId && $currentExpiredAt && $currentExpiredAt->isFuture()) {
-                $newExpiredDate = $currentExpiredAt->addMonth();
-            } else {
-                $newExpiredDate = Carbon::now()->addMonth();
+        
+            // Tentukan ID paket berdasarkan Nama Paket yang ada di DB Kakak
+            // Sesuaikan string ini dengan apa yang Kakak simpan saat user klik beli
+            $packageName = strtolower($transaction->package_name);
+            $packageId = 0; // Default gratis
+        
+            if (str_contains($packageName, 'pemula') || str_contains($packageName, 'growth')) {
+                $packageId = 1;
+            } elseif (str_contains($packageName, 'pro') || str_contains($packageName, 'business')) {
+                $packageId = 2;
             }
-
+        
             // Update data User
+            $user = $transaction->user;
             $user->update([
                 'package' => $packageId,
-                'package_expired_at' => $newExpiredDate,
+                'package_expired_at' => Carbon::now()->addMonth(),
             ]);
-
-            // Update Status Transaksi di DB Lokal
+        
+            // Update Status Transaksi
             $transaction->update([
                 'transaction_status' => 'paid',
-                'payment_type' => $request->input('payment_channel') ?? $transaction->payment_type,
-                'expired_at' => $newExpiredDate,
-                'trx_id' => $trxId 
+                'payment_type' => $request->input('payment_channel'),
             ]);
 
             // --- PENGIRIMAN EMAIL NOTIFIKASI ---
