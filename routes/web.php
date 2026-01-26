@@ -22,23 +22,6 @@ use App\Http\Controllers\Admin\AdminSiteController;
 use App\Http\Controllers\Admin\AdminLinktreeController;
 use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Admin\AdminShortlinkController;
-
-
-use Illuminate\Auth\Notifications\ResetPassword;
-use App\Models\User;
-
-Route::get('/preview-reset-password', function () {
-    // Ambil user pertama sebagai contoh
-    $user = User::first() ?? new User(['name' => 'Kakak User', 'email' => 'kakak@example.com']);
-
-    // Buat token palsu (biasanya dikirim Laravel ke tabel password_reset_tokens)
-    $token = 'test-token-12345';
-
-    // Render tampilan email Reset Password
-    // Ini akan otomatis menggunakan template resources/views/vendor/notifications/email.blade.php
-    return (new ResetPassword($token))->toMail($user);
-});
-
 /*
 |--------------------------------------------------------------------------
 | 1. Public Static Routes
