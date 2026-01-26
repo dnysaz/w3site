@@ -28,7 +28,7 @@ class AiController extends Controller
         ]);
     
         // 3. Ambil System Prompt
-        $path = storage_path('app/ai/system_prompt.json');
+        $path = database_path('data/system_prompt.json');
         if (!File::exists($path)) {
             return response()->json([
                 'success' => false, 
