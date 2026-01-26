@@ -138,7 +138,7 @@
             btn.disabled = true;
             textSpan.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin mr-2"></i> Memproses...';
 
-            fetch("{{ route('pricing.select') }}", {
+            fetch("{{ route('pricing.select, [], true') }}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

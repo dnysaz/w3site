@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL; // Baris penting 1
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Baris penting 2: Memaksa semua URL menggunakan HTTPS di server production
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
     }
 }
