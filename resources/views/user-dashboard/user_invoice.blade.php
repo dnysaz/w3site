@@ -9,10 +9,24 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
         @media print {
+            /* Sembunyikan elemen yang tidak perlu saat cetak */
             .no-print { display: none !important; }
+            
+            /* Reset background dan bayangan untuk printer */
             body { background: white !important; padding: 0 !important; }
-            .print-shadow-none { shadow: none !important; border: 1px solid #f1f5f9 !important; }
+            .print-shadow-none { box-shadow: none !important; border: 1px solid #f1f5f9 !important; margin: 0 !important; max-width: 100% !important; }
+            
+            /* Pastikan warna latar belakang (Slate 900) tetap tercetak */
+            .bg-slate-900 { background-color: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .text-white { color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .bg-blue-600 { background-color: #2563eb !important; -webkit-print-color-adjust: exact; }
+            
+            @page {
+                size: auto;
+                margin: 0mm;
+            }
         }
     </style>
 </head>
@@ -23,9 +37,13 @@
         
         {{-- Floating Action (No Print) --}}
         <div class="absolute top-8 right-8 no-print flex gap-2">
-            <button onclick="window.print()" class="flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all active:scale-95">
-                <i class="fa-solid fa-print"></i> Print Struk
+            {{-- Tombol PDF/Print (Sama fungsinya karena browser modern "Print" bisa save as PDF) --}}
+            <button onclick="window.print()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-500/30">
+                <i class="fa-solid fa-file-pdf"></i> Simpan PDF / Print
             </button>
+            <a href="{{ route('billing.history') }}" class="flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </a>
         </div>
 
         {{-- Top Header - Branding --}}
@@ -82,7 +100,7 @@
                                     <div>
                                         <p class="text-sm font-black text-slate-900 uppercase tracking-tight">{{ $transaction->package_name }}</p>
                                         <p class="text-[10px] text-blue-500 font-bold mt-1 uppercase tracking-wider">Masa Aktif: 1 Bulan</p>
-                                        <p class="text-[10px] text-slate-400 font-medium mt-1 italic italic">Valid Until: {{ $transaction->expired_at->format('d F Y') }}</p>
+                                        <p class="text-[10px] text-slate-400 font-medium mt-1 italic italic">Valid Until: {{ $transaction->expired_at ? $transaction->expired_at->format('d F Y') : '-' }}</p>
                                     </div>
                                 </div>
                             </td>

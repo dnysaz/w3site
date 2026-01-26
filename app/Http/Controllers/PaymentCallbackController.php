@@ -7,7 +7,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
-// Import Notification di sini
+use Illuminate\Support\Facades\Log;
 use App\Notifications\PaymentSuccessful;
 
 class PaymentCallbackController extends Controller
@@ -16,13 +16,12 @@ class PaymentCallbackController extends Controller
     {
         /**
          * PAYLOAD PAYMENKU V1.0
-         * event: 'payment.status_updated'
          * reference_id: ID unik dari sistem w3site
          * status: 'paid', 'pending', 'expired', 'cancelled'
          */
         $referenceId = $request->input('reference_id');
         $status = $request->input('status');
-        $trxId = $request->input('trx_id');
+        $paymentChannel = $request->input('payment_channel');
 
         // 1. Validasi Keamanan (Double Check ke API Paymenku)
         $response = Http::withHeaders([
@@ -31,30 +30,27 @@ class PaymentCallbackController extends Controller
         ])->get("https://paymenku.com/api/v1/check-status/{$referenceId}");
 
         if ($response->status() !== 200 || $response->json('data.status') !== $status) {
-            return response()->json(['message' => 'Data callback tidak valid atau tidak cocok dengan server'], 403);
+            return response()->json(['message' => 'Data callback tidak valid'], 403);
         }
 
-        // 2. Cari data transaksi di database lokal
+        // 2. Cari data transaksi
         $transaction = Transaction::where('order_id', $referenceId)->first();
 
         if (!$transaction) {
-            return response()->json(['message' => 'Transaksi tidak ditemukan di database kami'], 404);
+            return response()->json(['message' => 'Transaksi tidak ditemukan'], 404);
         }
 
-        // Ambil data User lewat relasi
-        $user = $transaction->user;
-
-        // 3. LOGIKA BERDASARKAN STATUS PAYMENKU
+        // 3. LOGIKA BERDASARKAN STATUS
         if ($status === 'paid') {
-    
-            if (in_array($transaction->transaction_status, ['settlement', 'paid'])) {
+            
+            // Cek jika sudah pernah diproses agar tidak double update
+            if (in_array($transaction->transaction_status, ['settlement', 'capture'])) {
                 return response()->json(['message' => 'Sudah diproses'], 200);
             }
         
-            // Tentukan ID paket berdasarkan Nama Paket yang ada di DB Kakak
-            // Sesuaikan string ini dengan apa yang Kakak simpan saat user klik beli
+            // Tentukan ID paket
             $packageName = strtolower($transaction->package_name);
-            $packageId = 0; // Default gratis
+            $packageId = 0; 
         
             if (str_contains($packageName, 'pemula') || str_contains($packageName, 'growth')) {
                 $packageId = 1;
@@ -62,25 +58,25 @@ class PaymentCallbackController extends Controller
                 $packageId = 2;
             }
         
-            // Update data User
+            // Update data User (Untuk akses fitur)
             $user = $transaction->user;
             $user->update([
                 'package' => $packageId,
                 'package_expired_at' => Carbon::now()->addMonth(),
             ]);
         
-            // Update Status Transaksi
+            // Update Data Transaksi (Untuk tampilan Billing History)
             $transaction->update([
-                'transaction_status' => 'paid',
-                'payment_type' => $request->input('payment_channel'),
+                'transaction_status' => 'settlement', // Set ke settlement agar Blade otomatis "Lunas"
+                'payment_type' => $paymentChannel,
+                'expired_at' => Carbon::now()->addMonth(), // INI PENTING: Agar masa aktif muncul di tabel
             ]);
 
-            // --- PENGIRIMAN EMAIL NOTIFIKASI ---
+            // Kirim Notifikasi Email
             try {
                 $user->notify(new PaymentSuccessful($transaction));
             } catch (\Exception $e) {
-                // Kita log jika gagal kirim email, tapi tetap kembalikan respons OK ke Paymenku
-                \Log::error('Gagal mengirim email pembayaran: ' . $e->getMessage());
+                Log::error('Gagal mengirim email pembayaran: ' . $e->getMessage());
             }
 
         } elseif (in_array($status, ['expired', 'cancelled'])) {

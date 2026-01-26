@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class TransactionController extends Controller
 {
@@ -18,8 +19,6 @@ class TransactionController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Kita tidak lagi menggunakan collect([]) dummy di sini.
-        // Jika kosong, view akan otomatis menangani dengan @forelse
         return view('user-dashboard.payment_history', compact('transactions'));
     }
 
@@ -37,10 +36,16 @@ class TransactionController extends Controller
             ->where('order_id', $order_id)
             ->firstOrFail();
 
-        // Proteksi tambahan: Struk hanya bisa diakses jika pembayaran lunas
-        $statusLunas = ['settlement', 'capture', 'success'];
-        if (!in_array(strtolower($transaction->transaction_status), $statusLunas)) {
-            abort(403, 'Struk belum tersedia untuk transaksi ini.');
+        /**
+         * Proteksi tambahan: Struk hanya bisa diakses jika pembayaran lunas.
+         * Kita tambahkan 'paid' ke dalam array karena di database PostgreSQL 
+         * status transaksi Kakak tercatat sebagai 'paid'.
+         */
+        $statusLunas = ['settlement', 'capture', 'success', 'paid', 'lunas'];
+        $statusSaatIni = strtolower($transaction->transaction_status);
+
+        if (!in_array($statusSaatIni, $statusLunas)) {
+            abort(403, 'Struk belum tersedia untuk transaksi dengan status: ' . $statusSaatIni);
         }
 
         return view('user-dashboard.user_invoice', compact('transaction'));
