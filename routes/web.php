@@ -14,6 +14,8 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\ShowcaseController;
+use App\Http\Controllers\ChatController;
+
 
 // Admin Controllers
 use App\Http\Controllers\Admin\AdminDashboardController;
@@ -172,6 +174,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/delete/{id}', [AiController::class, 'delete_blog'])->name('ai.blog.delete');
         });
     });
+
+    Route::get('/user/chat', [ChatController::class, 'chat_user'])->name('user.chat');
+    Route::get('/admin/chat', [ChatController::class, 'chat_admin'])->name('admin.chat');
+    
 });
 
 /*

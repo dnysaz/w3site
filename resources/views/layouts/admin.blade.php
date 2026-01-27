@@ -51,16 +51,28 @@
             </div>
             
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-3 pl-2">
+                <a href="{{ route('admin.chat') }}" class="relative p-2 text-slate-400 hover:text-blue-600 transition-colors group">
+                    <i class="fa-solid fa-comment-dots text-xl"></i>
+                    
+                    <div id="msgBadge" class="hidden absolute -top-1 -right-1 flex items-center gap-1 bg-red-500 text-[9px] text-white px-1.5 py-0.5 rounded-full border-2 border-white shadow-sm animate-bounce font-black">
+                        <span id="adminUnreadCount">0</span>
+                    </div>
+                    
+                    <div class="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-[1.2rem] p-3 opacity-0 group-hover:opacity-100 pointer-events-none transition-all z-50">
+                        <p id="msgStatusText" class="text-[10px] font-black text-slate-400 tracking-widest">Tidak ada pesan</p>
+                    </div>
+                </a>
+            
+                <div class="flex items-center gap-3 pl-4 border-l border-slate-100">
                     {{-- Icon Profile --}}
-                    <div class="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                    <div class="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200 transition-transform hover:scale-105">
                         <i class="fas fa-user-shield text-sm"></i>
                     </div>
             
                     {{-- Nama User --}}
                     <div class="flex flex-col">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1">Authenticated</span>
-                        <span class="text-sm font-black text-slate-900 tracking-tight leading-none">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Admin Mode</span>
+                        <span class="text-sm font-black text-slate-900 tracking-tight leading-none uppercase">
                             {{ auth()->user()->name }}
                         </span>
                     </div>
@@ -159,7 +171,7 @@
                 </div>
             </aside>
 
-            <main class="flex-1 overflow-y-auto p-6 md:p-8 bg-[#f8fafc] scroll-smooth">
+            <main class="flex-1 overflow-y-auto p-6 md:p-8">
                 {{ $slot }}
             </main>
         </div>
@@ -176,6 +188,52 @@
         }
         setInterval(updateDateTime, 1000);
         updateDateTime();
+    </script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const SB_URL = "https://lymknuizgzhvufyvapwh.supabase.co";
+            const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5bWtudWl6Z3podnVmeXZhcHdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0OTQ1NTgsImV4cCI6MjA4NTA3MDU1OH0.UtTrgmN-IiT0Yn4Dy6ftWk79uI0HO0hARzUVDKZsk4w";
+            
+            const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+            const adminBadge = document.getElementById('msgBadge');
+            const adminCount = document.getElementById('adminUnreadCount');
+            const statusText = document.getElementById('msgStatusText');
+            const isCurrentlyInAdminChat = "{{ request()->routeIs('admin.chat') }}";
+    
+            let totalNewMsgs = 0;
+    
+            // Listener hanya aktif jika admin tidak sedang di halaman chat admin
+            if (!isCurrentlyInAdminChat) {
+                supabaseClient
+                    .channel('admin-global-notif')
+                    .on('postgres_changes', { 
+                        event: 'INSERT', 
+                        schema: 'public', 
+                        table: 'discussions'
+                    }, payload => {
+                        const newMsg = payload.new;
+                        
+                        // Jika pesan dari USER (is_admin = false)
+                        if (String(newMsg.is_admin) === 'false') {
+                            totalNewMsgs++;
+                            
+                            // Update Badge UI
+                            adminCount.innerText = totalNewMsgs;
+                            adminBadge.classList.remove('hidden');
+                            
+                            // Update Tooltip UI
+                            statusText.innerText = `${totalNewMsgs} Pesan baru.`;
+                            statusText.classList.replace('text-slate-400', 'text-red-500');
+    
+                            // Suara Notif Admin (Lebih tegas)
+                            new Audio('https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3').play().catch(e => {});
+                        }
+                    })
+                    .subscribe();
+            }
+        });
     </script>
 
     @stack('scripts')
