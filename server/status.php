@@ -12,14 +12,14 @@ if (!$subdomain || !$action) {
 
 $wwwPath = dirname(dirname(__DIR__));
 $targetDir = $wwwPath . DIRECTORY_SEPARATOR . 'users-data' . DIRECTORY_SEPARATOR . $subdomain;
-$pendingTemplate = __DIR__ . DIRECTORY_SEPARATOR . 'index_pending.php';
+$pendingTemplate = __DIR__ . DIRECTORY_SEPARATOR . 'index_pending.html';
 
 if (!is_dir($targetDir)) {
     exit("ERROR: Folder website tidak ditemukan.");
 }
 
 try {
-    $gembokPath = $targetDir . DIRECTORY_SEPARATOR . 'index.php';
+    $gembokPath = $targetDir . DIRECTORY_SEPARATOR . 'index.html';
     // Kita cari semua kemungkinan file index milik user
     $userIndices = ['index.html', 'index.htm'];
 
