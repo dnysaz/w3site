@@ -4,6 +4,9 @@
  * File: server/status.php
  */
 
+// Bersihkan cache status file sistem agar PHP tidak membaca data lama
+clearstatcache();
+
 $subdomain = $argv[1] ?? null;
 $action = $argv[2] ?? null; 
 
@@ -19,44 +22,53 @@ if (!is_dir($targetDir)) {
     exit("ERROR: Folder website tidak ditemukan.");
 }
 
-if (!file_exists($pendingTemplate)) {
-    exit("ERROR: File template pending tidak ditemukan.");
-}
-
 try {
     $userIndices = ['index.html', 'index.htm'];
 
     if ($action === 'pending') {
-        // 1. Sembunyikan file asli (index.html -> index.html.locked)
+        if (!file_exists($pendingTemplate)) {
+            exit("ERROR: File template pending tidak ditemukan.");
+        }
+
+        // 1. Amankan file asli ke .locked
         foreach ($userIndices as $file) {
             $filePath = $targetDir . DIRECTORY_SEPARATOR . $file;
-            if (file_exists($filePath) && !str_ends_with($filePath, '.locked')) {
+            // Jika index.html ada dan BUKAN file .locked, segera rename
+            if (file_exists($filePath)) {
+                // Pastikan kita tidak me-rename file yang sebenarnya sudah dipending sebelumnya
                 rename($filePath, $filePath . '.locked');
             }
         }
 
-        // 2. Pasang file pending (copy dari template)
+        // 2. Pasang file pending
         copy($pendingTemplate, $targetDir . DIRECTORY_SEPARATOR . 'index.html');
         
-        // Output ringkas agar mudah dibaca Laravel
         echo "SUCCESS";
     } 
+    
     else if ($action === 'active') {
-        // 1. Hapus SEMUA file index yang aktif (membersihkan file pending/gembok)
+        // 1. Hapus file "Pending/Gembok" yang sedang tampil saat ini
         foreach ($userIndices as $file) {
-            $filePath = $targetDir . DIRECTORY_SEPARATOR . $file;
-            if (file_exists($filePath)) {
-                unlink($filePath);
+            $currentFile = $targetDir . DIRECTORY_SEPARATOR . $file;
+            // Hapus jika file itu ada dan TIDAK ada file .locked-nya (berarti ini file sampah/pending)
+            // ATAU hapus saja jika file .locked-nya tersedia untuk dikembalikan
+            if (file_exists($currentFile)) {
+                unlink($currentFile);
             }
         }
 
-        // 2. Kembalikan file asli (index.html.locked -> index.html)
+        // 2. Kembalikan file asli dari .locked
         $restored = false;
         foreach ($userIndices as $file) {
             $lockedFile = $targetDir . DIRECTORY_SEPARATOR . $file . '.locked';
+            $originalFile = $targetDir . DIRECTORY_SEPARATOR . $file;
+
             if (file_exists($lockedFile)) {
-                rename($lockedFile, $targetDir . DIRECTORY_SEPARATOR . $file);
-                $restored = true;
+                // Pastikan tujuan (index.html) sudah benar-benar kosong sebelum rename
+                if (!file_exists($originalFile)) {
+                    rename($lockedFile, $originalFile);
+                    $restored = true;
+                }
             }
         }
         
