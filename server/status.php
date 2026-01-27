@@ -18,40 +18,46 @@ if (!is_dir($targetDir)) {
     exit("ERROR: Folder website tidak ditemukan.");
 }
 
+if (!file_exists($pendingTemplate)) {
+    exit("ERROR: File template pending tidak ditemukan.");
+}
+
 try {
-    $gembokPath = $targetDir . DIRECTORY_SEPARATOR . 'index.html';
-    // Kita cari semua kemungkinan file index milik user
+    $mainIndexPath = $targetDir . DIRECTORY_SEPARATOR . 'index.html';
     $userIndices = ['index.html', 'index.htm'];
 
     if ($action === 'pending') {
-        // 1. "Gembok" pintu utama
-        copy($pendingTemplate, $gembokPath);
-
-        // 2. "Sembunyikan" file asli agar tidak bisa dipanggil via URL manual
+        // --- 1. AMANKAN FILE ASLI DULU ---
         foreach ($userIndices as $file) {
             $filePath = $targetDir . DIRECTORY_SEPARATOR . $file;
+            // Pastikan kita tidak me-rename file yang sudah di-lock atau file pending itu sendiri
             if (file_exists($filePath)) {
-                // Rename index.html -> index.html.locked
+                // Rename menjadi .locked (Misal: index.html -> index.html.locked)
                 rename($filePath, $filePath . '.locked');
             }
         }
-        echo "SUCCESS";
+
+        // --- 2. PASANG FILE PENDING ---
+        // Setelah yang asli aman jadi .locked, baru kita copy template ke index.html
+        copy($pendingTemplate, $mainIndexPath);
+        
+        echo "SUCCESS: Status set to Pending. Original files locked.";
     } 
     else if ($action === 'active') {
-        // 1. Buang gemboknya
-        if (file_exists($gembokPath)) {
-            unlink($gembokPath);
+        // --- 1. HAPUS FILE PENDING ---
+        if (file_exists($mainIndexPath)) {
+            unlink($mainIndexPath);
         }
 
-        // 2. Kembalikan file asli dari persembunyian
+        // --- 2. KEMBALIKAN FILE ASLI ---
         foreach ($userIndices as $file) {
             $lockedFile = $targetDir . DIRECTORY_SEPARATOR . $file . '.locked';
             if (file_exists($lockedFile)) {
-                // Rename index.html.locked -> index.html
-                rename($lockedFile, str_replace('.locked', '', $lockedFile));
+                // Kembalikan ke nama semula (Misal: index.html.locked -> index.html)
+                rename($lockedFile, $targetDir . DIRECTORY_SEPARATOR . $file);
             }
         }
-        echo "SUCCESS";
+        echo "SUCCESS: Status set to Active. Original files restored.";
     }
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage();
