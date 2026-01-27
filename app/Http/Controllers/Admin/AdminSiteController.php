@@ -41,16 +41,22 @@ class AdminSiteController extends Controller
         $site = Site::findOrFail($id);
         $newStatus = ($site->status == 'active') ? 'pending' : 'active';
 
-        // Jalankan Bridge Script status.php
         $scriptPath = base_path('server' . DIRECTORY_SEPARATOR . 'status.php');
+        
+        // Gunakan Process untuk menjalankan script
         $process = new Process(['php', $scriptPath, $site->subdomain, $newStatus]);
         $process->setTimeout(60);
         $process->run();
 
+        // Ambil output standar (SUCCESS) dan error output (jika ada ERROR dari script)
         $output = trim($process->getOutput());
+        $errorOutput = trim($process->getErrorOutput());
 
-        if (!$process->isSuccessful() || $output !== 'SUCCESS') {
-            return back()->with('error', 'Gagal memperbarui file sistem di server: ' . $output);
+        // Cek apakah output mengandung kata SUCCESS
+        if (!$process->isSuccessful() || !str_contains($output, 'SUCCESS')) {
+            // Jika gagal, tampilkan pesan error yang dikirim oleh script PHP bridge
+            $errorMessage = $errorOutput ?: $output;
+            return back()->with('error', 'Gagal di server: ' . ($errorMessage ?: 'Unknown Error'));
         }
 
         // Update status di Database jika server sukses
