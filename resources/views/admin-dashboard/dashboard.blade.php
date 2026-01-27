@@ -6,17 +6,16 @@
         <p class="text-slate-500 text-sm font-medium">Monitoring data real-time platform w3site.</p>
     </div>
 
+    {{-- 1. Statistik Utama (Cards) --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all relative">
             <div>
                 <div class="flex items-center gap-2">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Revenue</p>
-                    {{-- Tombol Toggle --}}
                     <button id="toggleRevenue" class="text-slate-400 hover:text-blue-600 transition-colors">
                         <i class="fa-solid fa-eye text-[10px]" id="eyeIcon"></i>
                     </button>
                 </div>
-                {{-- Berikan ID pada Nominal dan simpan angka aslinya di data-attribute --}}
                 <h3 id="revenueValue" 
                     class="text-2xl font-black text-slate-900 mt-1" 
                     data-full="Rp {{ number_format($stats['total_revenue']) }}">
@@ -59,6 +58,62 @@
         </div>
     </div>
 
+    {{-- 2. BLOK BARU: SERVER HEALTH (Lebar Penuh) --}}
+    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm mb-8 relative overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-slate-200">
+                    <i class="fa-solid fa-server text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-slate-900 uppercase tracking-tighter text-lg">Server Health</h3>
+                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                        System Online: {{ $serverStats['uptime'] }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 flex-1 md:ml-12">
+                {{-- CPU Usage --}}
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">CPU Load</span>
+                        <span class="text-xs font-black text-slate-900">{{ $serverStats['cpu'] }}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000" style="width: {{ $serverStats['cpu'] }}"></div>
+                    </div>
+                </div>
+
+                {{-- RAM Usage --}}
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">RAM Usage</span>
+                        <span class="text-xs font-black text-slate-900">{{ $serverStats['ram'] }}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-indigo-500 h-full rounded-full transition-all duration-1000" style="width: {{ $serverStats['ram_p'] }}%"></div>
+                    </div>
+                </div>
+
+                {{-- Disk Usage --}}
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Storage</span>
+                        <span class="text-xs font-black text-slate-900">{{ $serverStats['disk'] }}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-amber-500 h-full rounded-full transition-all duration-1000" style="width: {{ $serverStats['disk_p'] }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- Hiasan Background --}}
+        <i class="fa-solid fa-microchip absolute -right-4 -bottom-4 text-slate-50 text-8xl"></i>
+    </div>
+
+    {{-- 3. Grafik Utama --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
             <h3 class="font-black text-slate-800 mb-6 flex items-center gap-2">
@@ -79,6 +134,7 @@
         </div>
     </div>
     
+    {{-- 4. Doughnut Charts & Content Dist --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
             <h3 class="font-black text-slate-800 mb-6 text-center text-sm uppercase tracking-widest">Paket Pengguna</h3>
@@ -212,10 +268,8 @@
             const revenueText = document.getElementById('revenueValue');
             const eyeIcon = document.getElementById('eyeIcon');
             
-            // Ambil status dari LocalStorage (default: visible)
             let isHidden = localStorage.getItem('revenueHidden') === 'true';
     
-            // Fungsi untuk Update Tampilan
             const updateDisplay = (hidden) => {
                 if (hidden) {
                     revenueText.innerText = 'Rp ••••••••';
@@ -226,13 +280,11 @@
                 }
             };
     
-            // Jalankan saat halaman pertama dimuat
             updateDisplay(isHidden);
     
-            // Event Klik
             toggleBtn.addEventListener('click', function() {
-                isHidden = !isHidden; // Switch status
-                localStorage.setItem('revenueHidden', isHidden); // Simpan ke browser
+                isHidden = !isHidden;
+                localStorage.setItem('revenueHidden', isHidden);
                 updateDisplay(isHidden);
             });
         });

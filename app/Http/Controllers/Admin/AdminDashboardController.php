@@ -16,6 +16,47 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
+        // --- LOGIKA STATUS VPS (htop style) ---
+        $isMac = PHP_OS === 'Darwin';
+        
+        // 1. Uptime
+        $uptime = shell_exec("uptime -p") ?? "N/A";
+
+        // 2. RAM Usage
+        if ($isMac) {
+            $ram = "Running on macOS (Local)";
+            $ram_percent = 0;
+        } else {
+            $free = shell_exec("free -m");
+            preg_match_all('/(\d+)/', $free, $matches);
+            $total_ram = $matches[0][0] ?? 1;
+            $used_ram  = $matches[0][1] ?? 0;
+            $ram = $used_ram . "MB / " . $total_ram . "MB";
+            $ram_percent = round(($used_ram / $total_ram) * 100);
+        }
+
+        // 3. CPU Load
+        $load = sys_getloadavg();
+        $cpu_load = ($load[0] ?? 0) . "%";
+
+        // 4. SSD / Disk Usage
+        $disk_total = disk_total_space("/");
+        $disk_free = disk_free_space("/");
+        $disk_used = $disk_total - $disk_free;
+        $disk_usage_percent = round(($disk_used / $disk_total) * 100);
+        $disk_readable = round($disk_used / (1024 * 1024 * 1024), 2) . "GB / " . round($disk_total / (1024 * 1024 * 1024), 2) . "GB";
+
+        $serverStats = [
+            'uptime' => $uptime,
+            'ram'    => $ram,
+            'ram_p'  => $ram_percent,
+            'cpu'    => $cpu_load,
+            'disk'   => $disk_readable,
+            'disk_p' => $disk_usage_percent,
+        ];
+
+        // --- DATA STATISTIK BAWAAN ---
+
         // 1. Statistik Utama (Cards)
         $stats = [
             'total_users'      => User::count() ?: 0,
@@ -39,9 +80,7 @@ class AdminDashboardController extends Controller
         // 3. Data Grafik Traffic Kunjungan (7 Hari Terakhir)
         $visitorChartData = collect();
         foreach ($chartData as $data) {
-            // Kita parse kembali tanggalnya untuk filter di VisitLog
             $currentDate = Carbon::createFromFormat('d M', $data->date)->year(now()->year)->toDateString();
-            
             $visitorChartData->push((object)[
                 'date'  => $data->date,
                 'total' => VisitLog::whereDate('date', $currentDate)->count()
@@ -62,7 +101,7 @@ class AdminDashboardController extends Controller
             'github' => Site::whereNotNull('repository_url')->where('repository_url', '!=', '')->count(),
         ];
 
-        // 5. Data Ranking Traffic (Negara & Browser)
+        // 5. Data Ranking Traffic
         $topCountries = VisitLog::select('country', DB::raw('count(*) as total'))
             ->whereNotNull('country')
             ->groupBy('country')
@@ -76,7 +115,7 @@ class AdminDashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // 6. Data List Terbaru (Transaksi & Kunjungan)
+        // 6. Data List Terbaru
         $latest_transactions = Transaction::with('user')
             ->whereIn('transaction_status', ['settlement', 'capture', 'success'])
             ->latest()
@@ -85,6 +124,7 @@ class AdminDashboardController extends Controller
 
         $latest_visits = VisitLog::latest()->take(5)->get();
 
+        // Kirim $serverStats ke view
         return view('admin-dashboard.dashboard', compact(
             'stats', 
             'userStats', 
@@ -94,7 +134,8 @@ class AdminDashboardController extends Controller
             'topCountries', 
             'topBrowsers', 
             'latest_transactions',
-            'latest_visits'
+            'latest_visits',
+            'serverStats' 
         ));
     }
 }
