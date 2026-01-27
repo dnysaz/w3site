@@ -22,6 +22,15 @@
             background: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.05) 0%, rgba(255, 255, 255, 0) 50%);
         }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TZVXJ1RH2X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-TZVXJ1RH2X');
+    </script>
 </head>
 <body class="antialiased hero-gradient">
     <div class="min-h-screen flex items-center justify-center p-4 md:p-8">
