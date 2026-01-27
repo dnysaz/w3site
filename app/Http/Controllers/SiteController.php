@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class SiteController extends Controller
 {
@@ -19,8 +20,50 @@ class SiteController extends Controller
      */
     public function storeName(Request $request)
     {
+        // Paksa input jadi kecil agar tidak bisa bypass (misal: "aDmIn" jadi "admin")
+        $request->merge([
+            'subdomain' => strtolower($request->subdomain)
+        ]);
+
+        $bannedWords = [
+            // Istilah Sistem & Admin
+            'admin', 'administrator', 'webmaster', 'system', 'root', 'w3site', 'official', 'dev', 
+            'support', 'billing', 'help', 'mail', 'email', 'api', 'server', 'status', 'account',
+            'login', 'register', 'signup', 'owner', 'staff', 'moderator','daftar','gabung','mendaftar',
+            
+            // Istilah Teknis / Reserved
+            'www', 'ftp', 'smtp', 'pop3', 'null', 'undefined', 'index', 'home', 'blog', 'shop', 
+            'store', 'asset', 'public', 'private', 'secure', 'dns', 'ns1', 'ns2', 'proxy','ssh',
+        
+            // JUDI ONLINE & SLOT (Indonesia & Umum)
+            'judi', 'slot', 'gacor', 'jp', 'maxwin', 'zeus', 'olympus', 'bet', 'taruhan', 
+            'kasino', 'casino', 'poker', 'togel', 'toto', 'slot88', ' pragmatic', 'baccarat', 
+            'domino', 'qq', 'bandar', 'bola-tangkas', 'sbobet', 'link-alternatif', 'deposit-pulsa',
+            'dana-gacor', 'rtp', 'rtp-live', 'jackpot', 'menang-besar', 'agen-judi', 'situs-judi','judol',
+        
+            // KATA KASAR & KELAMIN (Indonesia)
+            'anjing', 'babi', 'monyet', 'bangsat', 'kontol', 'memek', 'jembut', 'pentil', 
+            'ngentot', 'peler', 'peju', 'itil', 'pelacur', 'lonte', 'jablay', 'bejat', 
+            'bencong', 'banci', 'homo', 'lesbi', 'ngewe', 'titit', 'tetek', 'toket', 
+        
+            // KATA KASAR & VULGAR (Inggris)
+            'fuck', 'asshole', 'bitch', 'cock', 'pussy', 'dick', 'porn', 'sex', 'nude', 
+            'boobs', 'vagina', 'penis', 'bastard', 'slut', 'whore', 'shits', 'cum', 'gambling'
+        ];
+
         $request->validate([
-            'subdomain' => 'required|alpha_dash|min:3|max:30|unique:sites,subdomain',
+            'subdomain' => [
+                'required',
+                'alpha_dash',
+                'min:3',
+                'max:30',
+                'unique:sites,subdomain',
+                Rule::notIn($bannedWords),
+            ],
+        ], [
+            'subdomain.not_in' => 'Mohon gunakan nama situs lain!',
+            'subdomain.alpha_dash' => 'Subdomain hanya boleh berisi huruf, angka, dan strip.',
+            'subdomain.unique' => 'Subdomain ini sudah digunakan.',
         ]);
 
         $user = Auth::user();
