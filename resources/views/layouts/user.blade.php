@@ -146,6 +146,21 @@
         <main class="flex-1 ml-0 md:ml-64 p-6 md:p-10 w-full overflow-x-hidden">
             {{ $slot }}
         </main>
+        <div class="fixed bottom-8 right-8 z-[9999] group">
+            <div class="absolute bottom-full right-0 mb-4 w-64 bg-slate-900 text-white p-4 rounded-3xl shadow-2xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 pointer-events-none">
+                <p class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-1">Butuh Bantuan?</p>
+                <p class="text-xs leading-relaxed">Hubungi team admin kami di <span class="font-bold text-blue-200">hello@w3site.id</span> untuk bantuan teknis.</p>
+                <div class="absolute top-full right-6 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-slate-900"></div>
+            </div>
+        
+            <a href="mailto:hello@w3site.id" 
+               class="flex items-center justify-center w-16 h-16 bg-blue-600 text-white rounded-full shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] hover:bg-slate-900 hover:scale-110 active:scale-95 transition-all duration-300 relative">
+                
+                <span class="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20"></span>
+                
+                <i class="fa-solid fa-headset text-2xl relative z-10"></i>
+            </a>
+        </div>
     </div>
 </body>
 </html>
