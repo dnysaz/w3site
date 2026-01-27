@@ -130,7 +130,7 @@
                         <span>Profile Setting</span>
                     </a>
                 </div>
-                <div class="border-t border-slate-50">
+                {{-- <div class="border-t border-slate-50">
                     <a href="{{ route('user.chat') }}" class="group flex items-center justify-between px-4 py-3 rounded-xl font-bold text-sm transition-all
                         {{ request()->routeIs('user.chat') ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
                         
@@ -144,7 +144,7 @@
                             <span id="unreadCount">1</span>
                         </div>
                     </a>
-                </div>
+                </div> --}}
             </nav>
     
             <div class="p-6 border-t border-slate-50">
@@ -205,5 +205,8 @@
             }
         });
     </script>
+
+    {{-- include chat --}}
+    @include('includes.chat_popup')
 </body>
 </html>

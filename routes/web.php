@@ -14,7 +14,6 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\ShowcaseController;
-use App\Http\Controllers\ChatController;
 
 
 // Admin Controllers
@@ -24,6 +23,9 @@ use App\Http\Controllers\Admin\AdminSiteController;
 use App\Http\Controllers\Admin\AdminLinktreeController;
 use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Admin\AdminShortlinkController;
+use App\Http\Controllers\Admin\AdminChatController;
+
+
 /*
 |--------------------------------------------------------------------------
 | 1. Public Static Routes
@@ -82,6 +84,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     // Shortlink
     Route::get('/shortlinks', [AdminShortlinkController::class, 'index'])->name('shortlinks.index');
     Route::post('/shortlinks/{id}/toggle', [AdminShortlinkController::class, 'toggle'])->name('shortlinks.toggle');
+
+    // chat
+    Route::get('/chat', [AdminChatController::class, 'chat_admin'])->name('chat');
 });
 
 /*
@@ -174,9 +179,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/delete/{id}', [AiController::class, 'delete_blog'])->name('ai.blog.delete');
         });
     });
-
-    Route::get('/user/chat', [ChatController::class, 'chat_user'])->name('user.chat');
-    Route::get('/admin/chat', [ChatController::class, 'chat_admin'])->name('admin.chat');
     
 });
 
