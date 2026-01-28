@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\AdminLinktreeController;
 use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Admin\AdminShortlinkController;
 use App\Http\Controllers\Admin\AdminChatController;
+use App\Http\Controllers\Admin\LogController;
 
 
 /*
@@ -87,6 +88,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     // chat
     Route::get('/chat', [AdminChatController::class, 'chat_admin'])->name('chat');
+
+    // Logs 
+    Route::get('/system-logs', [LogController::class, 'index'])->name('logs');
 });
 
 /*

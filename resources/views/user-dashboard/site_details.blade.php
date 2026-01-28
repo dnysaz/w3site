@@ -67,11 +67,11 @@
                     </div>
                 </div>
 
-                <div class="mt-10">
+                {{-- <div class="mt-10">
                     <button @click="openDeleteModal({{ $site->id }}, '{{ $site->subdomain }}')" class="w-full py-4 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all">
                         Hapus Situs
                     </button>
-                </div>
+                </div> --}}
             </div>
         </div>
         {{-- Tracking Setup Box --}}
