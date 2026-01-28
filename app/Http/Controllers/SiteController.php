@@ -95,6 +95,7 @@ class SiteController extends Controller
      * PROSES 2: Upload & Deploy File ke Nama yang Sudah Ada
      * Alur: Simpan ZIP -> Jalankan Bridge Script -> Aktifkan Status
      */
+
     public function uploadFile(Request $request)
     {
         $request->validate([
@@ -104,6 +105,25 @@ class SiteController extends Controller
 
         $subdomain = strtolower($request->subdomain);
         $site = Site::where('subdomain', $subdomain)->where('user_id', Auth::id())->firstOrFail();
+
+        // 1. Validasi Keamanan Isi ZIP (Cek file .php)
+        $zip = new \ZipArchive;
+        if ($zip->open($request->file('file')->path()) === TRUE) {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $filename = $zip->getNameIndex($i);
+                
+                // Cek jika file berakhiran .php atau mengandung .php (misal: shell.php.jpg)
+                if (preg_match('/\.php($|\.)/i', $filename)) {
+                    $zip->close();
+                    return response()->json([
+                        'message' => 'Gagal! Untuk saat ini w3site belum mendukung file .php'
+                    ], 422);
+                }
+            }
+            $zip->close();
+        } else {
+            return response()->json(['message' => 'Format ZIP rusak atau tidak bisa dibaca.'], 422);
+        }
 
         // Persiapan Path Transit
         $tempDir = base_path('server' . DIRECTORY_SEPARATOR . 'temp');
@@ -125,10 +145,10 @@ class SiteController extends Controller
 
         if (!$process->isSuccessful() || $output !== 'SUCCESS') {
             if (File::exists($absoluteZipPath)) File::delete($absoluteZipPath);
-            return response()->json(['message' => 'Gagal deploy file.'], 500);
+            return response()->json(['message' => 'Gagal deploy file: ' . $output], 500);
         }
 
-        // Update status di DB menjadi Active
+        // Update status di DB
         $wwwPath = dirname(base_path()); 
         $finalPath = $wwwPath . DIRECTORY_SEPARATOR . 'users-data' . DIRECTORY_SEPARATOR . $subdomain;
 
