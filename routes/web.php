@@ -25,6 +25,8 @@ use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Admin\AdminShortlinkController;
 use App\Http\Controllers\Admin\AdminChatController;
 use App\Http\Controllers\Admin\LogSystemController;
+use App\Http\Controllers\Admin\TerminalController;
+
 
 
 /*
@@ -95,6 +97,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         Route::get('/', [LogSystemController::class, 'index'])->name('index');
         Route::post('/clear', [LogSystemController::class, 'clear'])->name('clear');
     });
+
+    // Terminal
+    Route::get('/terminal', [TerminalController::class, 'index'])->name('terminal.index');
+    Route::post('/terminal/execute', [TerminalController::class, 'execute'])->name('terminal.execute');
 });
 
 /*

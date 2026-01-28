@@ -14,6 +14,6 @@ class AdminChatController extends Controller
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 
-        return view("admin-dashboard.chat");
+        return view("admin-dashboard.chat.chat");
     }
 }

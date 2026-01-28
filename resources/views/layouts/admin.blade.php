@@ -153,6 +153,20 @@
                         <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">Transaksi</span>
                     </a>
 
+                    <a href="{{ route('admin.terminal.index') }}" 
+                        class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.terminal.*') ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' : 'text-slate-500 hover:bg-slate-50' }}">
+                        
+                        <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.terminal.*') ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
+                            <i class="fas fa-terminal text-sm"></i>
+                        </div>
+
+                        <span x-show="sidebarOpen || mobileMenu" 
+                            x-transition.opacity 
+                            class="font-bold text-sm tracking-tight whitespace-nowrap">
+                            Terminal VPS
+                        </span>
+                    </a>
+
                     <a href="{{ route('admin.logs.index') }}" 
                         class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.logs.*') ? 'bg-rose-600 text-white shadow-lg shadow-rose-200' : 'text-slate-500 hover:bg-slate-50' }}">
                         
