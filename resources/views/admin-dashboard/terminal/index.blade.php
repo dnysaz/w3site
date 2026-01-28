@@ -51,6 +51,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <script>
         const input = document.getElementById('terminal-input');
         const screen = document.getElementById('terminal-screen');
@@ -84,7 +86,9 @@
                 const response = await axios.post('{{ route("admin.terminal.execute") }}', { command: command });
                 appendOutput(response.data.output, response.data.status === 'error' ? 'error' : 'normal');
             } catch (error) {
-                appendOutput('SERVER CONNECTION ERROR: Bridge unreachable.', 'error');
+                console.error(error); // Lihat detailnya di F12 Console
+                let errorMsg = error.response ? error.response.data.output : 'Bridge unreachable';
+                appendOutput('ERROR: ' + errorMsg, 'error');
             }
         }
 
