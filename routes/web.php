@@ -24,7 +24,7 @@ use App\Http\Controllers\Admin\AdminLinktreeController;
 use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Admin\AdminShortlinkController;
 use App\Http\Controllers\Admin\AdminChatController;
-use App\Http\Controllers\Admin\LogController;
+use App\Http\Controllers\Admin\LogSystemController;
 
 
 /*
@@ -86,11 +86,15 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/shortlinks', [AdminShortlinkController::class, 'index'])->name('shortlinks.index');
     Route::post('/shortlinks/{id}/toggle', [AdminShortlinkController::class, 'toggle'])->name('shortlinks.toggle');
 
-    // chat
+    // Chat
     Route::get('/chat', [AdminChatController::class, 'chat_admin'])->name('chat');
 
-    // Logs 
-    Route::get('/system-logs', [LogController::class, 'index'])->name('logs');
+    // System Logs (Gabung di sini)
+    // URL akan menjadi: w3site.id/admin/logs
+    Route::prefix('logs')->name('logs.')->middleware([\App\Http\Middleware\OnlyAdminCanSeeLogs::class])->group(function () {
+        Route::get('/', [LogSystemController::class, 'index'])->name('index');
+        Route::post('/clear', [LogSystemController::class, 'clear'])->name('clear');
+    });
 });
 
 /*
