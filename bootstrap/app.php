@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // 2. KECUALIKAN ROUTE CALLBACK DARI CSRF
         $middleware->validateCsrfTokens(except: [
-            '/midtrans-callback',
+            'api/midtrans-callback',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

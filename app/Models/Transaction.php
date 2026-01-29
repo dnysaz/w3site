@@ -17,6 +17,7 @@ class Transaction extends Model
         'amount',
         'transaction_status',
         'payment_type',
+        'snap_token',
         'expired_at', // Pastikan kolom ini masuk fillable
     ];
 

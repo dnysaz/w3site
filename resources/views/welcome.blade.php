@@ -552,9 +552,9 @@
                     <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> 100 Biolinks</li>
                     <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> SSL Certificate</li>
                     <li class="flex items-center gap-3 text-blue-600"> <span class="text-amber-400">✅</span>✨ 100 AI Gen Hits</li>
-                    <li class="flex items-center gap-3">❌ <span class="line-through">AI SWOT Analysis</span></li>
-                    <li class="flex items-center gap-3">❌ <span class="line-through">AI SEO Navbar</span></li>
-                    <li class="flex items-center gap-3">❌ <span class="line-through">AI SEO Blog Content</span></li>
+                    <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> AI SWOT Analysis</li>
+                    <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> AI SEO Navbar</li>
+                    <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> AI SEO Blog Content</li>
                 </ul>
     
                 <a href="{{ route("pricing") }}" class="w-full py-5 bg-blue-600 text-white rounded-[2rem] font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 shadow-xl shadow-blue-200 transition-all text-center">Pilih Pemula</a>

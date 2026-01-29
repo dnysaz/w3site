@@ -27,27 +27,23 @@ class TransactionController extends Controller
      */
     public function printInvoice($order_id)
     {
-        /**
-         * Mengambil data asli. 
-         * Menggunakan firstOrFail agar otomatis 404 jika order_id tidak ada 
-         * atau bukan milik user tersebut.
-         */
         $transaction = Transaction::where('user_id', Auth::id())
             ->where('order_id', $order_id)
             ->firstOrFail();
-
-        /**
-         * Proteksi tambahan: Struk hanya bisa diakses jika pembayaran lunas.
-         * Kita tambahkan 'paid' ke dalam array karena di database PostgreSQL 
-         * status transaksi Kakak tercatat sebagai 'paid'.
-         */
-        $statusLunas = ['settlement', 'capture', 'success', 'paid', 'lunas'];
+    
+        // Mapping status Midtrans yang dianggap LUNAS
+        $statusLunas = ['settlement', 'capture', 'success'];
         $statusSaatIni = strtolower($transaction->transaction_status);
-
-        if (!in_array($statusSaatIni, $statusLunas)) {
-            abort(403, 'Struk belum tersedia untuk transaksi dengan status: ' . $statusSaatIni);
+    
+        // Jika statusnya 'pending', kita arahkan user untuk menyelesaikan pembayaran
+        if ($statusSaatIni === 'pending') {
+            return back()->with('info', 'Pembayaran Anda masih tertunda. Silakan selesaikan pembayaran terlebih dahulu.');
         }
-
+    
+        if (!in_array($statusSaatIni, $statusLunas)) {
+            abort(403, 'Struk belum tersedia. Status saat ini: ' . $statusSaatIni);
+        }
+    
         return view('user-dashboard.user_invoice', compact('transaction'));
     }
 }

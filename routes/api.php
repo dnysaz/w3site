@@ -1,7 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PaymentCallbackController;
+use App\Http\Controllers\MidtransCallbackController;
 
-// URL: https://w3site.id/api/paymenku-callback
-Route::post('/paymenku-callback', [PaymentCallbackController::class, 'callback']);
+/*
+|--------------------------------------------------------------------------
+| Midtrans Webhook Route
+|--------------------------------------------------------------------------
+| URL: https://w3site.id/api/midtrans-callback
+*/
+Route::post('/midtrans-callback', [MidtransCallbackController::class, 'handle']);

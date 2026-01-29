@@ -39,8 +39,8 @@
                     <ul class="space-y-4 mb-10 flex-1 text-[11px] text-slate-500 font-black uppercase tracking-tight">
                         <li class="flex items-center gap-3">✅ <span class="text-slate-900">256Mb</span> SSD Storage</li>
                         <li class="flex items-center gap-3">✅ <span class="text-slate-900">2 Sites</span></li>
-                        <li class="flex items-center gap-3"><span class="text-amber-400">✅</span>10 Shortlinks</li>
-                        <li class="flex items-center gap-3"><span class="text-amber-400">✅</span>10 Biolinks</li>
+                        <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> 10 Shortlinks</li>
+                        <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> 10 Biolinks</li>
                         <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> SSL Certificate</li>
                         <li class="flex items-center gap-3 text-blue-600"><span class="text-amber-400">✅</span>✨ 10 AI Gen Hits</li>
                         <li class="flex items-center gap-3">❌ <span class="line-through">AI SWOT Analysis</span></li>
@@ -78,9 +78,9 @@
                         <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> 100 Biolinks</li>
                         <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> SSL Certificate</li>
                         <li class="flex items-center gap-3 text-blue-600"> <span class="text-amber-400">✅</span>✨ 100 AI Gen Hits</li>
-                        <li class="flex items-center gap-3">❌ <span class="line-through">AI SWOT Analysis</span></li>
-                        <li class="flex items-center gap-3">❌ <span class="line-through">AI SEO Navbar</span></li>
-                        <li class="flex items-center gap-3">❌ <span class="line-through">AI SEO Blog Content</span></li>
+                        <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> AI SWOT Analysis</li>
+                        <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> AI SEO Navbar</li>
+                        <li class="flex items-center gap-3"><span class="text-amber-400">✅</span> AI SEO Blog Content</li>
                     </ul>
         
                     <button type="button"
@@ -127,45 +127,44 @@
         </section>
     </div>
 
-    {{-- Script Paymenku Integration --}}
+    {{-- Script Midtrans Integration --}}
+    {{-- Script Snap Dinamis --}}
+    @php $snapUrl = config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js'; @endphp
+    <script src="{{ $snapUrl }}" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+    
     <script>
         function payPackage(packageId) {
             const btn = document.getElementById(`btn-pay-${packageId}`);
             const textSpan = document.getElementById(`text-${packageId}`);
             const originalContent = textSpan.innerHTML;
             
-            // Loading State: Nonaktifkan tombol dan beri spinner
             btn.disabled = true;
             textSpan.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin mr-2"></i> Memproses...';
 
-            fetch("{{ route('pricing.select', [], true) }}", {
+            fetch("{{ route('pricing.select') }}", {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    package_id: packageId,
-                    channel_code: 'qris2' // Menggunakan QRIS dengan fee terendah
-                })
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                body: JSON.stringify({ package_id: packageId })
             })
             .then(async response => {
                 const res = await response.json();
-                if (!response.ok) throw new Error(res.error || 'Gagal menghubungi server Paymenku');
+                if (!response.ok) throw new Error(res.error || 'Terjadi kesalahan sistem');
                 return res;
             })
             .then(data => {
-                // Sesuai dokumentasi Paymenku v1.0, kita mengarahkan ke pay_url
-                if (data.pay_url) {
-                    window.location.href = data.pay_url;
-                } else if (data.status === 'success') {
-                    // Penanganan jika paket gratis atau tanpa biaya
+                if (data.snap_token) {
+                    window.snap.pay(data.snap_token, {
+                        onSuccess: () => window.location.href = "{{ route('dashboard') }}?status=success",
+                        onPending: () => window.location.href = "{{ route('dashboard') }}?status=pending",
+                        onError: () => { alert("Pembayaran Gagal!"); location.reload(); },
+                        onClose: () => { btn.disabled = false; textSpan.innerHTML = originalContent; }
+                    });
+                } else {
                     window.location.href = "{{ route('dashboard') }}?status=updated";
                 }
             })
             .catch(error => {
-                alert("Oops! " + error.message);
+                alert(error.message);
                 btn.disabled = false;
                 textSpan.innerHTML = originalContent;
             });

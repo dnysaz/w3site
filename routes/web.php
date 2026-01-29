@@ -127,10 +127,10 @@ Route::middleware(['auth', 'verified','CheckMaintenance'])->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 
     // Pricing & Profile
-    Route::get('/pricing', [PackageController::class, 'index'])->name('pricing');
-    Route::post('/pricing/select', [PackageController::class, 'select'])->name('pricing.select');
+    Route::get('/dashboard/pricing', [PackageController::class, 'index'])->name('pricing');
+    Route::post('/dashboard/pricing/select', [PackageController::class, 'select'])->name('pricing.select');
 
-    Route::prefix('profile')->group(function() {
+    Route::prefix('/dashboard/profile')->group(function() {
         Route::get('/', [UserDashboardController::class, 'profile'])->name('profile');
         Route::patch('/', [UserDashboardController::class, 'update'])->name('profile.update');
         Route::put('/password', [UserDashboardController::class, 'updatePassword'])->name('password.update');
@@ -138,21 +138,21 @@ Route::middleware(['auth', 'verified','CheckMaintenance'])->group(function () {
     });
 
     // Deployment
-    Route::get('/deploy/github/{subdomain?}', [GitDeployController::class, 'index'])->name('deploy.github');
-    Route::post('/deploy/github', [GitDeployController::class, 'process'])->name('deploy.process');
-    Route::post('/deploy/github/sync/{id}', [GitDeployController::class, 'sync'])->name('deploy.github.sync');
+    Route::get('/dashboard/deploy/github/{subdomain?}', [GitDeployController::class, 'index'])->name('deploy.github');
+    Route::post('/dashboard/deploy/github', [GitDeployController::class, 'process'])->name('deploy.process');
+    Route::post('/dashboard/deploy/github/sync/{id}', [GitDeployController::class, 'sync'])->name('deploy.github.sync');
     
     // Site Management
-    Route::get('/mysite', [UserDashboardController::class, 'mysite'])->name('mysite');
-    Route::post('/sites/store-name', [SiteController::class, 'storeName'])->name('sites.storeName');
-    Route::post('/sites/upload-file', [SiteController::class, 'uploadFile'])->name('sites.uploadFile');
-    Route::post('/sites/deploy-ai', [SiteController::class, 'deployFromAi'])->name('sites.deployAi');
-    Route::get('/sites/{subdomain}/details', [SiteController::class, 'site_details'])->name('sites.details');
-    Route::delete('/delete-site/{id}', [SiteController::class, 'destroy'])->name('sites.destroy');
+    Route::get('/dashboard/mysite', [UserDashboardController::class, 'mysite'])->name('mysite');
+    Route::post('/dashboard/sites/store-name', [SiteController::class, 'storeName'])->name('sites.storeName');
+    Route::post('/dashboard/sites/upload-file', [SiteController::class, 'uploadFile'])->name('sites.uploadFile');
+    Route::post('/dashboard/sites/deploy-ai', [SiteController::class, 'deployFromAi'])->name('sites.deployAi');
+    Route::get('/dashboard/sites/{subdomain}/details', [SiteController::class, 'site_details'])->name('sites.details');
+    Route::delete('/dashboard/delete-site/{id}', [SiteController::class, 'destroy'])->name('sites.destroy');
 
     // AI Tools General
-    Route::get('/ai-magic-tools', [UserDashboardController::class, 'ai_magic_tools'])->name('ai.index');
-    Route::get('/my-ai-design', [UserDashboardController::class, 'my_ai_design'])->name('my.ai.design');
+    Route::get('/dashboard/ai-magic-tools', [UserDashboardController::class, 'ai_magic_tools'])->name('ai.index');
+    Route::get('/dashboard/my-ai-design', [UserDashboardController::class, 'my_ai_design'])->name('my.ai.design');
 
     // Shortlink Management
     Route::prefix('dashboard/shortlink')->group(function () {
@@ -162,7 +162,7 @@ Route::middleware(['auth', 'verified','CheckMaintenance'])->group(function () {
     });
 
     // AI Linktree
-    Route::prefix('ai-linktree')->group(function() {
+    Route::prefix('/dashboard/ai-linktree')->group(function() {
         Route::get('/', [AiController::class, 'linktree'])->name('linktree');
         Route::get('/show/{id}', [AiController::class, 'show_linktree'])->name('ai.linktree.show'); 
         Route::post('/generate', [AiController::class, 'ai_linktree_generate'])->name('ai.linktree.generate');
@@ -175,27 +175,27 @@ Route::middleware(['auth', 'verified','CheckMaintenance'])->group(function () {
     Route::get('/dashboard/billing/invoice/{order_id}', [TransactionController::class, 'printInvoice'])->name('billing.invoice');
     /* --- Package Specific Middlewares --- */
     Route::middleware(['CheckPackage'])->group(function () {
-        Route::get('/aibuilder', [UserDashboardController::class, 'aibuilder'])->name('aibuilder');
-        Route::post('/ai/generate', [AiController::class, 'generate'])->name('ai.generate');
-        Route::post('/ai/save', [AiController::class, 'saveDesign'])->name('ai.save');
-        Route::get('/ai/edit/{fileName}', [AiController::class, 'editDesign'])->name('ai.edit');
-        Route::post('/ai/update/{fileName}', [AiController::class, 'updateDesign'])->name('ai.update');
-        Route::delete('/ai/design/{fileName}', [AiController::class, 'destroy'])->name('ai.destroy');
-        Route::get('/ai-site/preview/{fileName}', [AiController::class, 'viewFile'])->name('ai.view');
+        Route::get('/dashboard/aibuilder', [UserDashboardController::class, 'aibuilder'])->name('aibuilder');
+        Route::post('/dashboard/ai/generate', [AiController::class, 'generate'])->name('ai.generate');
+        Route::post('/dashboard/ai/save', [AiController::class, 'saveDesign'])->name('ai.save');
+        Route::get('/dashboard/ai/edit/{fileName}', [AiController::class, 'editDesign'])->name('ai.edit');
+        Route::post('/dashboard/ai/update/{fileName}', [AiController::class, 'updateDesign'])->name('ai.update');
+        Route::delete('/dashboard/ai/design/{fileName}', [AiController::class, 'destroy'])->name('ai.destroy');
+        Route::get('/dashboard/ai-site/preview/{fileName}', [AiController::class, 'viewFile'])->name('ai.view');
     });
 
     Route::middleware(['CheckPackage:pro'])->group(function () {
-        Route::prefix('ai-swot')->group(function() {
+        Route::prefix('/dashboard/ai-swot')->group(function() {
             Route::get('/', [AiController::class, 'aiswot'])->name('ai.swot.page');
             Route::post('/generate', [AiController::class, 'aiswot_generate'])->name('ai.swot.generate');
             Route::post('/reset', [AiController::class, 'destroy_swot_session'])->name('ai.swot.reset');
         });
-        Route::prefix('ai-seo')->group(function() {
+        Route::prefix('/dashboard/ai-seo')->group(function() {
             Route::get('/', [AiController::class, 'ai_seo_header'])->name('ai.seo.header');
             Route::post('/generate', [AiController::class, 'ai_seo_generate'])->name('ai.seo.generate');
             Route::post('/reset', [AiController::class, 'destroy_seo_session'])->name('ai.seo.destroy');
         });
-        Route::prefix('ai-blog')->group(function() {
+        Route::prefix('/dashboard/ai-blog')->group(function() {
             Route::get('/', [AiController::class, 'ai_blog_header'])->name('ai.blog.header');
             Route::get('/show/{id}', [AiController::class, 'show_blog'])->name('ai.blog.show'); 
             Route::post('/generate', [AiController::class, 'ai_blog_generate'])->name('ai.blog.generate');

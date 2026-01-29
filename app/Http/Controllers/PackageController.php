@@ -2,14 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction; // Pastikan Model Transaction sudah ada
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Midtrans\Config;
+use Midtrans\Snap;
 use Exception;
 
 class PackageController extends Controller
 {
+    public function __construct()
+    {
+        Config::$serverKey = config('services.midtrans.server_key');
+        Config::$isProduction = filter_var(config('services.midtrans.is_production'), FILTER_VALIDATE_BOOLEAN);
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+    }
+
     public function index()
     {
         return view('user-dashboard.pricing'); 
@@ -17,10 +27,7 @@ class PackageController extends Controller
 
     public function select(Request $request)
     {
-        $request->validate([
-            'package_id' => 'required|in:0,1,2',
-            'channel_code' => 'nullable|string' // Menangkap metode bayar dari frontend
-        ]);
+        $request->validate(['package_id' => 'required|in:0,1,2']);
 
         $user = Auth::user();
         $packageId = (int) $request->package_id;
@@ -29,58 +36,58 @@ class PackageController extends Controller
             return response()->json(['error' => 'Anda sudah menggunakan paket ini.'], 422);
         }
 
-        // 1. Logika Paket Gratis (Tetap Sama)
+        // 1. Logika Paket Gratis
         if ($packageId === 0) {
             $user->update(['package' => 0, 'package_expired_at' => null]);
-            return response()->json(['status' => 'success', 'redirect' => route('dashboard')]);
+            return response()->json(['status' => 'success', 'message' => 'Paket berhasil diubah ke Gratis']);
         }
 
         // 2. Persiapkan Data Transaksi
-        $orderId = 'INV-' . time() . '-' . $user->id;
+        $orderId = 'W3-' . time() . '-' . $user->id;
         $prices = [1 => 29000, 2 => 49000];
         $packageNames = [1 => 'Growth Pack', 2 => 'Business Pro'];
 
         try {
-            // 3. Panggil API Paymenku
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . env('PAYMENKU_API_KEY'),
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-            ])->post('https://paymenku.com/api/v1/transaction/create', [
-                'reference_id'   => $orderId,
-                'amount'         => $prices[$packageId],
-                'customer_name'  => $user->name,
-                'customer_email' => $user->email,
-                'channel_code'   => $request->channel_code ?? 'qris2', // Default QRIS jika tidak pilih
-                'return_url'     => route('dashboard'), // URL setelah bayar selesai
-            ]);
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $orderId,
+                    'gross_amount' => $prices[$packageId],
+                ],
+                'customer_details' => [
+                    'first_name' => $user->name,
+                    'email' => $user->email,
+                ],
+                'item_details' => [
+                    [
+                        'id' => 'PKG-' . $packageId,
+                        'price' => $prices[$packageId],
+                        'quantity' => 1,
+                        'name' => "Upgrade Ke " . $packageNames[$packageId],
+                    ]
+                ],
+            ];
 
-            $result = $response->json();
+            $snapToken = Snap::getSnapToken($params);
 
-            if ($response->status() !== 200 || $result['status'] !== 'success') {
-                throw new Exception($result['message'] ?? 'Gagal menghubungi Paymenku');
-            }
-
-            // 4. SIMPAN DATA KE DATABASE (PENTING!)
-            // Agar saat callback, kita tahu order_id ini untuk package_id yang mana
             Transaction::create([
                 'user_id'            => $user->id,
                 'order_id'           => $orderId,
-                'package_id'         => $packageId, // Simpan ini agar callback mudah
+                'package_id'         => $packageId,
                 'package_name'       => $packageNames[$packageId],
                 'amount'             => $prices[$packageId],
                 'transaction_status' => 'pending',
-                'payment_type'       => $request->channel_code ?? 'qris2',
+                'payment_type'       => 'midtrans',
+                'snap_token'         => $snapToken,
             ]);
 
-            // 5. Kirim pay_url ke Frontend
             return response()->json([
-                'status'  => 'success',
-                'pay_url' => $result['data']['pay_url']
+                'status'     => 'success',
+                'snap_token' => $snapToken
             ]);
 
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            Log::error('Midtrans Snap Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Gagal membuat sesi pembayaran.'], 500);
         }
     }
 }
