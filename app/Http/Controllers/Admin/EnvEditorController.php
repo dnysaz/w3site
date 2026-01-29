@@ -100,27 +100,31 @@ class EnvEditorController extends Controller
             if ($connection === 'pgsql') {
                 $filename = "backup-db-" . date('Y-m-d_H-i-s') . ".sql";
                 $path = storage_path("app/db_backups/" . $filename);
-            
+
                 if (!File::exists(storage_path("app/db_backups"))) {
                     File::makeDirectory(storage_path("app/db_backups"), 0755, true);
                 }
-            
+                
+                // Gunakan full path hasil 'which pg_dump' tadi
+                $pgDumpPath = '/usr/bin/pg_dump'; 
+
                 $process = Process::fromShellCommandline(sprintf(
-                    'PGPASSWORD="%s" pg_dump -h %s -U %s -d %s > %s',
+                    'PGPASSWORD="%s" %s -h %s -U %s -d %s > %s',
                     config('database.connections.pgsql.password'),
+                    $pgDumpPath, // Jalur absolut
                     config('database.connections.pgsql.host'),
                     config('database.connections.pgsql.username'),
                     config('database.connections.pgsql.database'),
                     $path
                 ));
-            
+
                 $process->setTimeout(300); 
                 $process->run();
-            
+
                 if (!$process->isSuccessful()) {
                     throw new ProcessFailedException($process);
                 }
-            
+
                 return response()->download($path)->deleteFileAfterSend(true);
             }
     
