@@ -26,6 +26,10 @@ use App\Http\Controllers\Admin\AdminShortlinkController;
 use App\Http\Controllers\Admin\AdminChatController;
 use App\Http\Controllers\Admin\LogSystemController;
 use App\Http\Controllers\Admin\TerminalController;
+use App\Http\Controllers\Admin\AdminSettingsController;
+use App\Http\Controllers\Admin\EnvEditorController;
+
+
 
 
 
@@ -101,6 +105,15 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     // Terminal
     Route::get('/terminal', [TerminalController::class, 'index'])->name('terminal.index');
     Route::post('/terminal/execute', [TerminalController::class, 'execute'])->name('terminal.execute');
+
+    // Settings 
+    Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
+    Route::post('/maintenance-toggle', [AdminSettingsController::class, 'toggleMaintenance'])->name('maintenance.toggle');
+
+    // env controller 
+    Route::get('/env-editor', [EnvEditorController::class, 'index'])->name('env.index');
+    Route::post('/env-editor', [EnvEditorController::class, 'update'])->name('env.update');
+    Route::get('/db-backup', [EnvEditorController::class, 'backupDatabase'])->name('db.backup');
 });
 
 /*
@@ -108,7 +121,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 | 4. User Authenticated Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified','CheckMaintenance'])->group(function () {
     
     // User Dashboard Utama
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
@@ -160,9 +173,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Billing
     Route::get('/dashboard/billing', [TransactionController::class, 'index'])->name('billing.history');
     Route::get('/dashboard/billing/invoice/{order_id}', [TransactionController::class, 'printInvoice'])->name('billing.invoice');
-
-    Route::post('/logout', [UserDashboardController::class, 'logout'])->name('logout');
-
     /* --- Package Specific Middlewares --- */
     Route::middleware(['CheckPackage'])->group(function () {
         Route::get('/aibuilder', [UserDashboardController::class, 'aibuilder'])->name('aibuilder');
@@ -194,6 +204,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
     
+    Route::post('/logout', action: [UserDashboardController::class, 'logout'])->name('logout');
 });
 
 /*

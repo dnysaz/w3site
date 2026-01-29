@@ -5,6 +5,8 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\CheckPackage;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CheckMaintenanceMode;
+
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'CheckPackage' => CheckPackage::class,
             'admin'        => AdminMiddleware::class,
+            'CheckMaintenance' => CheckMaintenanceMode::class,
         ]);
 
         // 2. KECUALIKAN ROUTE CALLBACK DARI CSRF

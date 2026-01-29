@@ -31,6 +31,18 @@
 </head>
 
 <body class="bg-[#f8fafc] text-slate-900 font-sans antialiased overflow-hidden">
+    @if(cache('dashboard_maintenance', false))
+        <div class="h-[40px] w-full bg-amber-500 flex items-center justify-center gap-3 overflow-hidden shadow-lg sticky top-0 z-[100]">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            </span>
+            
+            <p class="text-[11px] font-black text-white uppercase tracking-[0.2em]">
+                Mode Maintenance Aktif — Dashboard user sedang dikunci.
+            </p>
+        </div>
+    @endif
     <div x-data="{ 
             sidebarOpen: window.innerWidth > 1024, 
             mobileMenu: false 
@@ -153,34 +165,14 @@
                         <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">Transaksi</span>
                     </a>
 
-                    <a href="{{ route('admin.terminal.index') }}" 
-                        class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.terminal.*') ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' : 'text-slate-500 hover:bg-slate-50' }}">
-                        
-                        <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.terminal.*') ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
-                            <i class="fas fa-terminal text-sm"></i>
+                    <a href="{{ route('admin.settings.index') }}" 
+                        class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.sites.settings') ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-slate-50' }}">
+                        <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.sites.settings') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
+                            <i class="fas fa-sliders-h text-sm"></i>
                         </div>
-
-                        <span x-show="sidebarOpen || mobileMenu" 
-                            x-transition.opacity 
-                            class="font-bold text-sm tracking-tight whitespace-nowrap">
-                            Terminal VPS
-                        </span>
+                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">System Settings</span>
                     </a>
-
-                    <a href="{{ route('admin.logs.index') }}" 
-                        class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.logs.*') ? 'bg-rose-600 text-white shadow-lg shadow-rose-200' : 'text-slate-500 hover:bg-slate-50' }}">
-                        
-                        <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.logs.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
-                            <i class="fas fa-terminal text-sm"></i>
-                        </div>
-                        
-                        <span x-show="sidebarOpen || mobileMenu" 
-                            x-transition.opacity 
-                            class="font-bold text-sm tracking-tight whitespace-nowrap">
-                            System Logs
-                        </span>
-                    </a>
-
+                    
                 </div>
 
                 <div class="p-4 border-t border-slate-100 flex-none bg-white">
