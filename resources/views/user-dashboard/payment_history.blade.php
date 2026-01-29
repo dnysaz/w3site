@@ -1,6 +1,6 @@
 <x-user-layout>
     <div class="">
-        {{-- Header Section --}}
+        {{-- Header Section Tetap Sama --}}
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
             <div>
                 <h1 class="text-2xl font-[1000] text-slate-900 tracking-tight">Billing <span class="text-blue-600">History</span> </h1>
@@ -8,7 +8,6 @@
             </div>
         </div>
 
-        {{-- Transactions Card --}}
         <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
@@ -24,23 +23,19 @@
                     <tbody class="divide-y divide-slate-50">
                         @forelse($transactions as $trx)
                         <tr class="group hover:bg-slate-50/30 transition-all">
-                            {{-- Order ID --}}
+                            {{-- Order ID & Tanggal --}}
                             <td class="px-8 py-6">
                                 <div class="flex flex-col">
                                     <span class="text-[11px] font-black text-slate-900 uppercase tracking-tight">#{{ $trx->order_id }}</span>
-                                    <span class="text-[10px] text-slate-400 font-bold mt-1">
-                                        {{ $trx->created_at->format('d M Y, H:i') }}
-                                    </span>
+                                    <span class="text-[10px] text-slate-400 font-bold mt-1">{{ $trx->created_at->format('d M Y, H:i') }}</span>
                                 </div>
                             </td>
 
-                            {{-- Package & Price --}}
+                            {{-- Paket & Nominal --}}
                             <td class="px-8 py-6">
                                 <div class="flex flex-col">
                                     <span class="text-xs font-black text-slate-900 uppercase">{{ $trx->package_name }}</span>
-                                    <span class="text-[10px] text-blue-600 font-black mt-1 italic">
-                                        Rp {{ number_format($trx->amount, 0, ',', '.') }}
-                                    </span>
+                                    <span class="text-[10px] text-blue-600 font-black mt-1 italic">Rp {{ number_format($trx->amount, 0, ',', '.') }}</span>
                                 </div>
                             </td>
 
@@ -56,7 +51,7 @@
                                     };
                                 @endphp
                                 <span class="px-3 py-1.5 border {{ $color }} text-[9px] font-[1000] uppercase rounded-lg tracking-widest">
-                                    {{ $status == 'settlement' ? 'Lunas' : $status }}
+                                    {{ $status == 'settlement' ? 'Lunas' : ($status == 'expire' ? 'Kadaluarsa' : $status) }}
                                 </span>
                             </td>
 
@@ -64,22 +59,11 @@
                             <td class="px-8 py-6">
                                 <div class="flex flex-col">
                                     @if(in_array($status, ['settlement', 'capture']))
-                                        <span class="text-xs font-black text-slate-800 tracking-tighter">
-                                            {{ $trx->expired_at->format('d M Y') }}
-                                        </span>
-                                        
-                                        @php
-                                            // Kita bungkus dengan (int) untuk membuang angka di belakang koma
-                                            $daysLeft = (int) now()->diffInDays($trx->expired_at, false);
-                                        @endphp
-                            
-                                        @if($daysLeft < 0)
-                                            <span class="text-[9px] font-black text-red-500 uppercase mt-1">Sesi Berakhir</span>
-                                        @elseif($daysLeft == 0)
-                                            <span class="text-[9px] font-black text-amber-500 uppercase mt-1 italic">Habis Hari Ini</span>
-                                        @else
-                                            <span class="text-[9px] font-black text-blue-400 uppercase mt-1 italic">Sisa {{ $daysLeft }} Hari</span>
-                                        @endif
+                                        <span class="text-xs font-black text-slate-800 tracking-tighter">{{ $trx->expired_at->format('d M Y') }}</span>
+                                        @php $daysLeft = (int) now()->diffInDays($trx->expired_at, false); @endphp
+                                        @if($daysLeft < 0) <span class="text-[9px] font-black text-red-500 uppercase mt-1">Sesi Berakhir</span>
+                                        @elseif($daysLeft == 0) <span class="text-[9px] font-black text-amber-500 uppercase mt-1 italic">Habis Hari Ini</span>
+                                        @else <span class="text-[9px] font-black text-blue-400 uppercase mt-1 italic">Sisa {{ $daysLeft }} Hari</span> @endif
                                     @else
                                         <span class="text-[10px] font-black text-slate-200 uppercase tracking-widest">-</span>
                                     @endif
@@ -91,9 +75,14 @@
                                 @if(in_array($status, ['settlement', 'capture']))
                                     <a href="{{ route('billing.invoice', $trx->order_id) }}" target="_blank"
                                        class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-900 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">
-                                        <i class="fa-solid fa-file-invoice opacity-50"></i>
-                                        Invoice
+                                        <i class="fa-solid fa-file-invoice opacity-50"></i> Invoice
                                     </a>
+                                @elseif($status == 'pending' && $trx->snap_token)
+                                    {{-- TOMBOL BARU: BAYAR SEKARANG --}}
+                                    <button type="button" onclick="resumePayment('{{ $trx->snap_token }}')"
+                                       class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-md shadow-amber-100">
+                                        <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
+                                    </button>
                                 @else
                                     <span class="text-[9px] font-black text-slate-200 uppercase tracking-[0.2em] italic">Locked</span>
                                 @endif
@@ -115,13 +104,19 @@
                 </table>
             </div>
         </div>
-
-        {{-- Footer Info --}}
-        <div class="mt-8 flex items-center gap-4 p-6 bg-blue-50/50 rounded-[2rem] border border-blue-100/50">
-            <i class="fa-solid fa-circle-info text-blue-500"></i>
-            <p class="text-[14px] text-blue-700 font-bold leading-relaxed">
-                Pembayaran Anda diproses secara otomatis. Jika terjadi kendala pada aktivasi paket setelah status "Lunas", silakan hubungi tim dukungan kami dengan melampirkan Order ID Anda.
-            </p>
-        </div>
     </div>
+
+    {{-- Script untuk resume payment --}}
+    @php $snapUrl = config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js'; @endphp
+    <script src="{{ $snapUrl }}" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+    <script>
+        function resumePayment(snapToken) {
+            window.snap.pay(snapToken, {
+                onSuccess: function(result) { window.location.href = "{{ route('billing.index') }}?status=success"; },
+                onPending: function(result) { window.location.href = "{{ route('billing.index') }}?status=pending"; },
+                onError: function(result) { alert("Pembayaran Gagal!"); },
+                onClose: function() { console.log('customer closed the popup without finishing the payment'); }
+            });
+        }
+    </script>
 </x-user-layout>
