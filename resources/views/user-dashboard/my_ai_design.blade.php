@@ -164,7 +164,6 @@
                                         <i class="fa-solid fa-link-slash text-slate-200 text-2xl"></i>
                                     </div>
                                     <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Belum Ada Situs Aktif</p>
-                                    <a href="{{ route('sites.index') }}" class="text-blue-600 text-[10px] font-bold underline mt-2 inline-block">Buat situs pertama Anda</a>
                                 </div>
                             @endforelse
                         </div>
