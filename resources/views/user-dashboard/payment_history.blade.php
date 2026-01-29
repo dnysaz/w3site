@@ -112,8 +112,8 @@
     <script>
         function resumePayment(snapToken) {
             window.snap.pay(snapToken, {
-                onSuccess: function(result) { window.location.href = "{{ route('billing.index') }}?status=success"; },
-                onPending: function(result) { window.location.href = "{{ route('billing.index') }}?status=pending"; },
+                onSuccess: function(result) { window.location.href = "{{ route('billing.history') }}?status=success"; },
+                onPending: function(result) { window.location.href = "{{ route('billing.history') }}?status=pending"; },
                 onError: function(result) { alert("Pembayaran Gagal!"); },
                 onClose: function() { console.log('customer closed the popup without finishing the payment'); }
             });
