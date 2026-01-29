@@ -130,21 +130,6 @@
                         <span>Profile Setting</span>
                     </a>
                 </div>
-                {{-- <div class="border-t border-slate-50">
-                    <a href="{{ route('user.chat') }}" class="group flex items-center justify-between px-4 py-3 rounded-xl font-bold text-sm transition-all
-                        {{ request()->routeIs('user.chat') ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
-                        
-                        <div class="flex items-center gap-4">
-                            <i class="fa-solid fa-message w-5 text-center transition-transform group-hover:scale-110"></i>
-                            <span>Chat Admin</span>
-                        </div>
-                
-                        <div id="userChatBadge" class="hidden items-center gap-1.5 bg-red-500 text-[10px] text-white px-2 py-0.5 rounded-full shadow-sm animate-bounce">
-                            <i class="fa-solid fa-envelope-open text-[9px]"></i>
-                            <span id="unreadCount">1</span>
-                        </div>
-                    </a>
-                </div> --}}
             </nav>
     
             <div class="p-6 border-t border-slate-50">
@@ -158,7 +143,7 @@
             </div>
         </aside>
     
-        <main class="flex-1 ml-0 md:ml-64 p-6 md:p-10 w-full overflow-x-hidden">
+        <main class="flex-1 ml-0 md:ml-64 p-4 w-full overflow-x-hidden">
             {{ $slot }}
         </main>
     </div>

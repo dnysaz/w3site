@@ -1,4 +1,7 @@
 <x-user-layout>
+
+    @include('includes.package_information')
+
     @if(!auth()->user()->hasVerifiedEmail())
         <div class="mb-6">
             <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
