@@ -35,10 +35,12 @@
     <div class="min-h-screen bg-[#f8fafc] flex flex-col md:flex-row">
         
         <div class="md:hidden bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold italic text-sm">w3</div>
-                <span class="text-lg font-extrabold tracking-tight text-slate-900">w3site</span>
-            </div>
+            <a href="{{ route('home') }}">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold italic text-sm">w3</div>
+                    <span class="text-lg font-extrabold tracking-tight text-slate-900">w3site</span>
+                </div>
+            </a>
             <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')" class="p-2 bg-slate-50 rounded-lg text-slate-600">
                 <i class="fa-solid fa-bars text-xl"></i>
             </button>

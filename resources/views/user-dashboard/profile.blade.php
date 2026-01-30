@@ -102,76 +102,96 @@
                 showNew: false,
                 showConfirm: false 
             }">
-                <form action="{{ route('password.update') }}" method="POST" class="space-y-5" @submit="isSavingPassword = true">
-                    @csrf
-                    @method('PUT')
-        
-                    <div class="group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Password Saat Ini</label>
-                        <div class="relative mt-2 flex items-center">
-                            <span class="absolute left-4 text-slate-400 group-focus-within:text-blue-500 transition-colors">
-                                <i class="fa-solid fa-key"></i>
-                            </span>
-                            <input :type="showCurrent ? 'text' : 'password'" name="current_password" 
-                                class="w-full pl-11 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-slate-900 shadow-sm">
-                            
-                            <button type="button" @click="showCurrent = !showCurrent" class="absolute right-4 text-slate-400 hover:text-blue-500 transition-colors">
-                                <i class="fa-solid" :class="showCurrent ? 'fa-eye-slash' : 'fa-eye'"></i>
-                            </button>
+                @if(auth()->user()->social_type === 'google')
+                    {{-- Tampilan Khusus User Google --}}
+                    <div class="py-10 flex flex-col items-center text-center">
+                        <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-[2rem] flex items-center justify-center text-3xl mb-6 shadow-sm border border-blue-100/50 animate-pulse">
+                            <i class="fa-brands fa-google"></i>
                         </div>
-                        @error('current_password') <p class="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase tracking-widest">{{ $message }}</p> @enderror
-                    </div>
-        
-                    <div class="group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Password Baru</label>
-                        <div class="relative mt-2 flex items-center">
-                            <span class="absolute left-4 text-slate-400 group-focus-within:text-blue-500 transition-colors">
-                                <i class="fa-solid fa-lock-open"></i>
-                            </span>
-                            <input :type="showNew ? 'text' : 'password'" name="password" 
-                                class="w-full pl-11 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-slate-900 shadow-sm">
-                            
-                            <button type="button" @click="showNew = !showNew" class="absolute right-4 text-slate-400 hover:text-blue-500 transition-colors">
-                                <i class="fa-solid" :class="showNew ? 'fa-eye-slash' : 'fa-eye'"></i>
-                            </button>
-                        </div>
-                        @error('password') <p class="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase tracking-widest">{{ $message }}</p> @enderror
-                    </div>
-        
-                    <div class="group">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Konfirmasi Password Baru</label>
-                        <div class="relative mt-2 flex items-center">
-                            <span class="absolute left-4 text-slate-400 group-focus-within:text-blue-500 transition-colors">
-                                <i class="fa-solid fa-shield-check"></i>
-                            </span>
-                            <input :type="showConfirm ? 'text' : 'password'" name="password_confirmation" 
-                                class="w-full pl-11 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-slate-900 shadow-sm">
-                            
-                            <button type="button" @click="showConfirm = !showConfirm" class="absolute right-4 text-slate-400 hover:text-blue-500 transition-colors">
-                                <i class="fa-solid" :class="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i>
-                            </button>
+                        <h4 class="font-black text-slate-900 tracking-tighter text-md">Terhubung dengan Google</h4>
+                        <p class="text-[14px] text-slate-500 font-bold mt-3 max-w-md leading-relaxed tracking-wide">
+                            Anda masuk menggunakan akun Google. Keamanan dan kata sandi Anda dikelola sepenuhnya oleh Google.
+                        </p>
+                        <div class="mt-8 p-4 bg-slate-50 rounded-2xl border hover:border-blue-600 max-w-xs border-slate-100 w-full">
+                            <a href="https://myaccount.google.com/security" target="_blank" 
+                               class="flex items-center justify-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">
+                                Buka Akun Google <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
+                            </a>
                         </div>
                     </div>
+                @else
+                    {{-- Form Update Password (Untuk User Manual) --}}
+                    <form action="{{ route('password.update') }}" method="POST" class="space-y-5" @submit="isSavingPassword = true">
+                        @csrf
+                        @method('PUT')
         
-                    <div class="flex flex-col sm:flex-row items-center gap-4 pt-4">
-                        <button type="submit" 
-                            :class="isSavingPassword ? 'opacity-70 cursor-wait' : 'hover:scale-[1.02] active:scale-[0.98]'"
-                            class="w-full sm:w-fit px-8 py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-blue-100 flex items-center justify-center gap-2">
-                            <span x-show="!isSavingPassword">Perbarui Password</span>
-                            <span x-show="isSavingPassword" class="flex items-center gap-2">
-                                <i class="fa-solid fa-circle-notch animate-spin"></i> Memproses...
-                            </span>
-                        </button>
-        
-                        @if (session('status') === 'password-updated')
-                            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
-                                class="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-xl border border-green-100 transition-all">
-                                <i class="fa-solid fa-circle-check"></i>
-                                <span class="text-[9px] font-black uppercase tracking-widest">Changed</span>
+                        <div class="group">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Password Saat Ini</label>
+                            <div class="relative mt-2 flex items-center">
+                                <span class="absolute left-4 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                                    <i class="fa-solid fa-key"></i>
+                                </span>
+                                <input :type="showCurrent ? 'text' : 'password'" name="current_password" 
+                                    class="w-full pl-11 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-slate-900 shadow-sm">
+                                
+                                <button type="button" @click="showCurrent = !showCurrent" class="absolute right-4 text-slate-400 hover:text-blue-500 transition-colors">
+                                    <i class="fa-solid" :class="showCurrent ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
                             </div>
-                        @endif
-                    </div>
-                </form>
+                            @error('current_password') <p class="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase tracking-widest">{{ $message }}</p> @enderror
+                        </div>
+        
+                        <div class="group">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Password Baru</label>
+                            <div class="relative mt-2 flex items-center">
+                                <span class="absolute left-4 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                                    <i class="fa-solid fa-lock-open"></i>
+                                </span>
+                                <input :type="showNew ? 'text' : 'password'" name="password" 
+                                    class="w-full pl-11 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-slate-900 shadow-sm">
+                                
+                                <button type="button" @click="showNew = !showNew" class="absolute right-4 text-slate-400 hover:text-blue-500 transition-colors">
+                                    <i class="fa-solid" :class="showNew ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
+                            </div>
+                            @error('password') <p class="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase tracking-widest">{{ $message }}</p> @enderror
+                        </div>
+        
+                        <div class="group">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Konfirmasi Password Baru</label>
+                            <div class="relative mt-2 flex items-center">
+                                <span class="absolute left-4 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                                    <i class="fa-solid fa-shield-check"></i>
+                                </span>
+                                <input :type="showConfirm ? 'text' : 'password'" name="password_confirmation" 
+                                    class="w-full pl-11 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-slate-900 shadow-sm">
+                                
+                                <button type="button" @click="showConfirm = !showConfirm" class="absolute right-4 text-slate-400 hover:text-blue-500 transition-colors">
+                                    <i class="fa-solid" :class="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
+                            </div>
+                        </div>
+        
+                        <div class="flex flex-col sm:flex-row items-center gap-4 pt-4">
+                            <button type="submit" 
+                                :class="isSavingPassword ? 'opacity-70 cursor-wait' : 'hover:scale-[1.02] active:scale-[0.98]'"
+                                class="w-full sm:w-fit px-8 py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-blue-100 flex items-center justify-center gap-2">
+                                <span x-show="!isSavingPassword">Perbarui Password</span>
+                                <span x-show="isSavingPassword" class="flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-notch animate-spin"></i> Memproses...
+                                </span>
+                            </button>
+        
+                            @if (session('status') === 'password-updated')
+                                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
+                                    class="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-xl border border-green-100 transition-all">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest">Changed</span>
+                                </div>
+                            @endif
+                        </div>
+                    </form>
+                @endif
             </div>
             <div class="absolute -right-6 -top-6 text-slate-50/40 text-8xl pointer-events-none rotate-12">
                 <i class="fa-solid fa-shield-halved"></i>
@@ -218,12 +238,11 @@
         showDeleteModal: {{ $errors->userDeletion->isNotEmpty() ? 'true' : 'false' }},
         isDeleting: false 
     }" 
-        {{-- Listener Global yang lebih ketat --}}
         @open-modal.window="if($event.detail === 'confirm-user-deletion') showDeleteModal = true"
         @close.window="showDeleteModal = false"
         @keydown.escape.window="showDeleteModal = false"
         x-cloak>
-
+    
         {{-- Overlay & Modal Container --}}
         <div x-show="showDeleteModal" 
             class="fixed inset-0 z-[150] overflow-y-auto flex items-center justify-center p-4">
@@ -235,7 +254,7 @@
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
                 @click="showDeleteModal = false"></div>
-
+    
             {{-- Box Modal --}}
             <div x-show="showDeleteModal" 
                 x-transition:enter="transition ease-out duration-300"
@@ -243,11 +262,10 @@
                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                 class="relative bg-white w-full max-w-xl rounded-[2rem] shadow-2xl p-8 border border-slate-100 overflow-hidden">
                 
-                {{-- Background Decoration Icon --}}
                 <div class="absolute -right-10 -top-10 text-slate-50 text-9xl pointer-events-none rotate-12">
                     <i class="fa-solid fa-user-slash"></i>
                 </div>
-
+    
                 <div class="flex items-center gap-4 mb-8 relative z-10">
                     <div class="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center text-2xl shadow-sm border border-red-100/50">
                         <i class="fa-solid fa-triangle-exclamation"></i>
@@ -257,11 +275,11 @@
                         <p class="text-[10px] text-red-500 font-black uppercase tracking-[0.2em]">Konfirmasi Terakhir</p>
                     </div>
                 </div>
-
+    
                 <form method="post" action="{{ route('profile.destroy') }}" class="relative z-10 space-y-4" @submit="isDeleting = true">
                     @csrf
                     @method('delete')
-
+    
                     <div class="flex gap-4 p-5 rounded-3xl bg-slate-50 border border-slate-100 group transition-all hover:bg-red-50/30">
                         <i class="fa-solid fa-dumpster-fire text-red-500 mt-1"></i>
                         <div>
@@ -269,34 +287,51 @@
                             <p class="text-[11px] text-slate-500 leading-relaxed font-bold uppercase">Semua subdomain, file situs, dan data database akan dimusnahkan seketika.</p>
                         </div>
                     </div>
-
-                    {{-- Password Input --}}
-                    <div class="pt-4 group" x-data="{ showPass: false }">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Ketik Password Anda</label>
-                        <div class="relative mt-2 flex items-center">
-                            <span class="absolute left-4 text-slate-400 group-focus-within:text-red-500 transition-colors">
-                                <i class="fa-solid fa-key text-sm"></i>
-                            </span>
-                            <input :type="showPass ? 'text' : 'password'" name="password" required
-                                class="w-full pl-11 pr-12 py-4 bg-white border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all font-bold text-slate-900 shadow-sm"
-                                placeholder="••••••••">
-                            <button type="button" @click="showPass = !showPass" class="absolute right-4 text-slate-400 hover:text-red-500 transition-colors">
-                                <i class="fa-solid" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
-                            </button>
-                        </div>
-                        
-                        {{-- Pesan Error Validasi --}}
-                        @if($errors->userDeletion->has('password'))
-                            <div class="flex items-center gap-2 mt-3 ml-1 text-red-500 animate-pulse">
-                                <i class="fa-solid fa-circle-exclamation text-xs"></i>
-                                <p class="text-[10px] font-black uppercase tracking-widest">
-                                    {{ $errors->userDeletion->first('password') }}
-                                </p>
+    
+                    {{-- Logika Password Input vs Google Info --}}
+                    @if(auth()->user()->social_type === 'google')
+                        <div class="pt-4">
+                            <div class="p-6 rounded-[1.5rem] bg-amber-50 border border-amber-100 flex gap-4">
+                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-amber-500 shadow-sm flex-shrink-0">
+                                    <i class="fa-brands fa-google text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-amber-800 uppercase tracking-widest mb-1">Verifikasi Akun Google</p>
+                                    <p class="text-[11px] text-amber-700/80 font-bold leading-relaxed">
+                                        Anda login via Google, sehingga verifikasi password tidak diperlukan. Tindakan ini akan menghapus akun <b>{{ auth()->user()->email }}</b> secara permanen.
+                                    </p>
+                                </div>
                             </div>
-                        @endif
-                    </div>
-
-                    {{-- Action Buttons --}}
+                            {{-- Input tersembunyi untuk menjaga validitas form --}}
+                            <input type="hidden" name="password" value="google-auth-bypass">
+                        </div>
+                    @else
+                        {{-- Password Input (Hanya untuk User Manual) --}}
+                        <div class="pt-4 group" x-data="{ showPass: false }">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Ketik Password Anda</label>
+                            <div class="relative mt-2 flex items-center">
+                                <span class="absolute left-4 text-slate-400 group-focus-within:text-red-500 transition-colors">
+                                    <i class="fa-solid fa-key text-sm"></i>
+                                </span>
+                                <input :type="showPass ? 'text' : 'password'" name="password" required
+                                    class="w-full pl-11 pr-12 py-4 bg-white border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all font-bold text-slate-900 shadow-sm"
+                                    placeholder="••••••••">
+                                <button type="button" @click="showPass = !showPass" class="absolute right-4 text-slate-400 hover:text-red-500 transition-colors">
+                                    <i class="fa-solid" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
+                            </div>
+                            
+                            @if($errors->userDeletion->has('password'))
+                                <div class="flex items-center gap-2 mt-3 ml-1 text-red-500 animate-pulse">
+                                    <i class="fa-solid fa-circle-exclamation text-xs"></i>
+                                    <p class="text-[10px] font-black uppercase tracking-widest">
+                                        {{ $errors->userDeletion->first('password') }}
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+    
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
                         <button type="button" @click="showDeleteModal = false" 
                             class="py-4 bg-slate-100 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-200 transition-all order-2 sm:order-1">

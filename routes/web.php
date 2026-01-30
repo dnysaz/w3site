@@ -29,6 +29,12 @@ use App\Http\Controllers\Admin\TerminalController;
 use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\EnvEditorController;
 
+//Google Auth
+use App\Http\Controllers\Auth\GoogleAuthController;
+
+Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('login.google');
+Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+
 
 
 /*

@@ -151,53 +151,6 @@ class UserDashboardController extends Controller
 
         return redirect('/');
     }
-     
-    public function destroy(Request $request): RedirectResponse
-    {
-        // 1. Validasi Password
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        // 2. Ambil User beserta relasi sites-nya
-        $user = $request->user();
-        $user->load('sites'); // Pastikan relasi 'sites' sudah didefinisikan di Model User
-        $userId = $user->id;
-        $scriptPath = base_path('server' . DIRECTORY_SEPARATOR . 'destroy.php');
-
-        // 3. JALANKAN BRIDGE DESTROY UNTUK SETIAP SUBDOMAIN
-        if (File::exists($scriptPath)) {
-            foreach ($user->sites as $site) {
-                // Gunakan $site->subdomain sesuai struktur tabel 'sites' kamu
-                if (!empty($site->subdomain)) {
-                    $process = new Process(['php', $scriptPath, $site->subdomain]);
-                    $process->run();
-
-                    $output = trim($process->getOutput());
-                    if (!$process->isSuccessful() || $output !== 'DESTROYED') {
-                        Log::error("Destroy Gagal untuk subdomain: {$site->subdomain}. Output: " . $output);
-                    }
-                }
-            }
-        }
-
-        // 4. HAPUS STORAGE INTERNAL (Asset, Foto Profil, dll)
-        $userStoragePath = 'users-designs/' . $userId;
-        if (Storage::disk('public')->exists($userStoragePath)) {
-            Storage::disk('public')->deleteDirectory($userStoragePath);
-        }
-
-        // 5. PROSES BREEZE (Logout & Hapus DB)
-        // Database 'sites' akan otomatis terhapus karena onDelete('cascade') di migration kamu
-        Auth::logout();
-        $user->delete();
-
-        // 6. INVALIDASI SESI
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/')->with('success', 'Akun dan seluruh aset website Anda telah berhasil dihapus secara permanen.');
-    }
 
     public function mysite()
     {
@@ -271,6 +224,56 @@ class UserDashboardController extends Controller
         $sites = auth()->user()->sites; 
 
         return view('user-dashboard/my_ai_design', compact('designs', 'sites'));
+    }
+
+
+    public function destroy(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        // 1. Validasi Password (Hanya jika user BUKAN dari Google)
+        if ($user->social_type !== 'google') {
+            $request->validateWithBag('userDeletion', [
+                'password' => ['required', 'current_password'],
+            ]);
+        }
+
+        // 2. Ambil User beserta relasi sites-nya
+        $user->load('sites'); 
+        $userId = $user->id;
+        $scriptPath = base_path('server' . DIRECTORY_SEPARATOR . 'destroy.php');
+
+        // 3. JALANKAN BRIDGE DESTROY UNTUK SETIAP SUBDOMAIN
+        if (File::exists($scriptPath)) {
+            foreach ($user->sites as $site) {
+                if (!empty($site->subdomain)) {
+                    // Menjalankan script PHP eksternal untuk menghapus file di server
+                    $process = new Process(['php', $scriptPath, $site->subdomain]);
+                    $process->run();
+
+                    $output = trim($process->getOutput());
+                    if (!$process->isSuccessful() || $output !== 'DESTROYED') {
+                        Log::error("Destroy Gagal untuk subdomain: {$site->subdomain}. Output: " . $output);
+                    }
+                }
+            }
+        }
+
+        // 4. HAPUS STORAGE INTERNAL (Asset, Foto Profil, dll)
+        $userStoragePath = 'users-designs/' . $userId;
+        if (Storage::disk('public')->exists($userStoragePath)) {
+            Storage::disk('public')->deleteDirectory($userStoragePath);
+        }
+
+        // 5. PROSES BREEZE (Logout & Hapus DB)
+        Auth::logout();
+        $user->delete();
+
+        // 6. INVALIDASI SESI
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('success', 'Akun dan seluruh aset website Anda telah berhasil dihapus secara permanen.');
     }
 
 

@@ -24,9 +24,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
-        'status',
+        'social_id',
+        'social_type',
         'avatar',
+        'status',
         'package',            // Tambahan: 0, 1, 2, 3
+        'email_verified_at',
         'package_expired_at', // Tambahan: Masa aktif paket
     ];
 
