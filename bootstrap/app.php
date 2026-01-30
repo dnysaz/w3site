@@ -25,8 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // 2. KECUALIKAN ROUTE CALLBACK DARI CSRF
         $middleware->validateCsrfTokens(except: [
-            'api/midtrans-callback',
-            'midtrans-callback',
+            'midtrans-callback', // Cukup tulis begini jika di web.php
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -32,6 +32,10 @@ use App\Http\Controllers\Admin\EnvEditorController;
 //Google Auth
 use App\Http\Controllers\Auth\GoogleAuthController;
 
+// Midtrans 
+use App\Http\Controllers\MidtransCallbackController;
+Route::post('/midtrans-callback', [MidtransCallbackController::class, 'handle']);
+
 Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
 
