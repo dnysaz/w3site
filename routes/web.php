@@ -31,8 +31,6 @@ use App\Http\Controllers\Admin\EnvEditorController;
 
 
 
-
-
 /*
 |--------------------------------------------------------------------------
 | 1. Public Static Routes
@@ -76,44 +74,43 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::patch('/users/{id}/package', [AdminUserController::class, 'updatePackage'])->name('users.update-package');
     Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
-    // Sites
+    // Sites & Linktree
     Route::get('/sites', [AdminSiteController::class, 'index'])->name('sites.index');
     Route::patch('/sites/{id}/toggle', [AdminSiteController::class, 'toggleStatus'])->name('sites.toggle');
-
-    // Linktree (Bio Link)
     Route::get('/linktrees', [AdminLinktreeController::class, 'index'])->name('linktrees.index');
     Route::post('/linktrees/{id}/toggle', [AdminLinktreeController::class, 'toggle'])->name('linktrees.toggle');
 
-    // Transaksi
+    // Transaksi & Shortlink
     Route::get('/transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/export', [AdminTransactionController::class, 'export'])->name('transactions.export');
-
-    // Shortlink
     Route::get('/shortlinks', [AdminShortlinkController::class, 'index'])->name('shortlinks.index');
     Route::post('/shortlinks/{id}/toggle', [AdminShortlinkController::class, 'toggle'])->name('shortlinks.toggle');
 
     // Chat
     Route::get('/chat', [AdminChatController::class, 'chat_admin'])->name('chat');
 
-    // System Logs (Gabung di sini)
-    // URL akan menjadi: w3site.id/admin/logs
-    Route::prefix('logs')->name('logs.')->middleware([\App\Http\Middleware\OnlyAdminCanSeeLogs::class])->group(function () {
-        Route::get('/', [LogSystemController::class, 'index'])->name('index');
-        Route::post('/clear', [LogSystemController::class, 'clear'])->name('clear');
+    // --- GRUP SETTINGS & TOOLS ---
+    Route::prefix('settings')->group(function () {
+        
+        // System Settings
+        Route::get('/', [AdminSettingsController::class, 'index'])->name('settings.index');
+        Route::post('/maintenance-toggle', [AdminSettingsController::class, 'toggleMaintenance'])->name('maintenance.toggle');
+
+        // Terminal (Kembali ke admin.terminal.index)
+        Route::get('/terminal', [TerminalController::class, 'index'])->name('terminal.index');
+        Route::post('/terminal/execute', [TerminalController::class, 'execute'])->name('terminal.execute');
+
+        // ENV Editor (Kembali ke admin.env.index)
+        Route::get('/env-editor', [EnvEditorController::class, 'index'])->name('env.index');
+        Route::post('/env-editor', [EnvEditorController::class, 'update'])->name('env.update');
+        Route::get('/db-backup', [EnvEditorController::class, 'backupDatabase'])->name('db.backup');
+
+        // Logs (Kembali ke admin.logs.index)
+        Route::prefix('logs')->name('logs.')->middleware([\App\Http\Middleware\OnlyAdminCanSeeLogs::class])->group(function () {
+            Route::get('/', [LogSystemController::class, 'index'])->name('index');
+            Route::post('/clear', [LogSystemController::class, 'clear'])->name('clear');
+        });
     });
-
-    // Terminal
-    Route::get('/terminal', [TerminalController::class, 'index'])->name('terminal.index');
-    Route::post('/terminal/execute', [TerminalController::class, 'execute'])->name('terminal.execute');
-
-    // Settings 
-    Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
-    Route::post('/maintenance-toggle', [AdminSettingsController::class, 'toggleMaintenance'])->name('maintenance.toggle');
-
-    // env controller 
-    Route::get('/env-editor', [EnvEditorController::class, 'index'])->name('env.index');
-    Route::post('/env-editor', [EnvEditorController::class, 'update'])->name('env.update');
-    Route::get('/db-backup', [EnvEditorController::class, 'backupDatabase'])->name('db.backup');
 });
 
 /*

@@ -166,8 +166,8 @@
                     </a>
 
                     <a href="{{ route('admin.settings.index') }}" 
-                        class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.sites.settings') ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-slate-50' }}">
-                        <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.sites.settings') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
+                        class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.settings.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-slate-50' }}">
+                        <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
                             <i class="fas fa-sliders-h text-sm"></i>
                         </div>
                         <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">System Settings</span>
