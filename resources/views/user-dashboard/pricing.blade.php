@@ -127,6 +127,68 @@
         </section>
     </div>
 
+    <div x-data="{ 
+            showStatusModal: {{ request()->has('status') ? 'true' : 'false' }},
+            statusType: '{{ request()->get('status') }}'
+        }" 
+        x-show="showStatusModal" 
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        class="fixed inset-0 z-[120] flex items-center justify-center p-4"
+        style="display: none;">
+        
+        {{-- Overlay --}}
+        <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md" @click="showStatusModal = false"></div>
+        
+        {{-- Modal Content --}}
+        <div class="relative bg-white w-full max-w-sm rounded-[2.5rem] p-10 text-center shadow-2xl border border-slate-50">
+            
+            {{-- Ikon Dinamis --}}
+            <template x-if="statusType === 'success'">
+                <div class="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                    <i class="fa-solid fa-circle-check text-4xl"></i>
+                </div>
+            </template>
+
+            <template x-if="statusType === 'pending'">
+                <div class="w-20 h-20 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                    <i class="fa-solid fa-clock text-4xl"></i>
+                </div>
+            </template>
+
+            <template x-if="statusType === 'error'">
+                <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-shake">
+                    <i class="fa-solid fa-circle-xmark text-4xl"></i>
+                </div>
+            </template>
+
+            {{-- Title & Message --}}
+            <h3 class="font-black text-xl text-slate-900 uppercase tracking-tight" 
+                x-text="statusType === 'success' ? 'Pembayaran Sukses!' : (statusType === 'pending' ? 'Menunggu Bayar' : 'Pembayaran Gagal')">
+            </h3>
+            
+            <div class="mt-4 p-4 rounded-2xl border transition-colors" 
+                :class="statusType === 'success' ? 'bg-emerald-50 border-emerald-100' : (statusType === 'pending' ? 'bg-amber-50 border-amber-100' : 'bg-red-50 border-red-100')">
+                <p class="text-[11px] leading-relaxed font-bold"
+                :class="statusType === 'success' ? 'text-emerald-700' : (statusType === 'pending' ? 'text-amber-700' : 'text-red-700')">
+                <span x-show="statusType === 'success'">Selamat! Paket Anda telah berhasil diaktifkan. Silakan mulai berkreasi!</span>
+                <span x-show="statusType === 'pending'">Selesaikan pembayaran Anda agar paket segera aktif. Cek email atau dashboard untuk instruksi.</span>
+                <span x-show="statusType === 'error'">Maaf, terjadi kesalahan saat memproses pembayaran. Silakan coba beberapa saat lagi.</span>
+                </p>
+            </div>
+
+            {{-- Actions --}}
+            <div class="mt-8 flex flex-col gap-3">
+                <button @click="showStatusModal = false" 
+                        class="w-full py-4 rounded-2xl text-[10px] font-[1000] uppercase tracking-widest transition-all shadow-lg text-white"
+                        :class="statusType === 'success' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200' : (statusType === 'pending' ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-200' : 'bg-red-600 hover:bg-red-700 shadow-red-200')">
+                    Tutup & Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
     {{-- Script Midtrans Integration --}}
     {{-- Script Snap Dinamis --}}
     @php $snapUrl = config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js'; @endphp
@@ -154,10 +216,19 @@
             .then(data => {
                 if (data.snap_token) {
                     window.snap.pay(data.snap_token, {
-                        onSuccess: () => window.location.href = "{{ route('dashboard') }}?status=success",
-                        onPending: () => window.location.href = "{{ route('dashboard') }}?status=pending",
-                        onError: () => { alert("Pembayaran Gagal!"); location.reload(); },
-                        onClose: () => { btn.disabled = false; textSpan.innerHTML = originalContent; }
+                        onSuccess: function(result) {
+                            window.location.href = "{{ route('dashboard') }}?status=success";
+                        },
+                        onPending: function(result) {
+                            window.location.href = "{{ route('dashboard') }}?status=pending&order_id=" + result.order_id;
+                        },
+                        onError: function(result) {
+                            window.location.href = "{{ route('dashboard') }}?status=error";
+                        },
+                        onClose: function() {
+                            btn.disabled = false;
+                            textSpan.innerHTML = originalContent;
+                        }
                     });
                 } else {
                     window.location.href = "{{ route('dashboard') }}?status=updated";
