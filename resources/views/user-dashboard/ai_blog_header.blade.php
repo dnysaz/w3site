@@ -309,7 +309,7 @@
                 },
 
                 openArticle(article) {
-                    fetch(`/ai-blog/show/${article.id}`)
+                    fetch(`/dashboard/ai-blog/show/${article.id}`)
                         .then(res => res.json())
                         .then(data => {
                             this.currentResult = {
