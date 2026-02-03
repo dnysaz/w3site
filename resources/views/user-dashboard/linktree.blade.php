@@ -480,7 +480,7 @@
     
                 deleteItem() {
                     if(!this.deleteId) return;
-                    fetch(`/ai-linktree/delete/${this.deleteId}`, {
+                    fetch(`/dashboard/ai-linktree/delete/${this.deleteId}`, {
                         method: 'DELETE',
                         headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
                     })

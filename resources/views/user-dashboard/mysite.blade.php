@@ -383,7 +383,7 @@
                 async confirmSync() {
                     this.isDeploying = true;
                     try {
-                        const res = await axios.post(`/deploy/github/sync/${this.siteToSyncId}`);
+                        const res = await axios.post(`/dashboard/deploy/github/sync/${this.siteToSyncId}`);
                         this.showSyncModal = false;
                         this.notify('Berhasil!', res.data.message, 'success');
                         setTimeout(() => location.reload(), 1500);
@@ -397,7 +397,7 @@
                     if (!this.subdomain || !this.isAvailable) return;
                     this.isDeploying = true;
                     try {
-                        await axios.post('/sites/store-name', { subdomain: this.subdomain });
+                        await axios.post('/dashboard/sites/store-name', { subdomain: this.subdomain });
                         this.showAddNameModal = false;
                         this.notify('Berhasil!', 'Nama situs berhasil dipesan.', 'success');
                         setTimeout(() => location.reload(), 1500);
@@ -409,13 +409,13 @@
 
                 async startUpload() {
                     if (!this.selectedFile) return;
-                    await this.uploadLogic('/sites/upload-file', 'Deploy Sukses!', 'Website Anda telah online.');
+                    await this.uploadLogic('/dashboard/sites/upload-file', 'Deploy Sukses!', 'Website Anda telah online.');
                 },
 
                 async startUpdateZip() {
                     if (!this.selectedFile) return;
                     // Menggunakan endpoint yang sama untuk overwrite
-                    await this.uploadLogic('/sites/upload-file', 'Update Berhasil!', 'File website Anda telah diperbarui.');
+                    await this.uploadLogic('/dashboard/sites/upload-file', 'Update Berhasil!', 'File website Anda telah diperbarui.');
                 },
 
                 async uploadLogic(url, successTitle, successMsg) {
@@ -455,7 +455,7 @@
                 async confirmDelete() {
                     this.isDeploying = true;
                     try {
-                        await axios.delete(`/delete-site/${this.siteToDeleteId}`);
+                        await axios.delete(`/dashboard/delete-site/${this.siteToDeleteId}`);
                         this.showDeleteModal = false;
                         this.notify('Dihapus!', 'Situs berhasil dihapus.', 'success');
                         setTimeout(() => location.reload(), 1200);

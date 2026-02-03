@@ -351,7 +351,7 @@
                 deleteArticle() {
                     if (!this.articleToDelete) return;
 
-                    fetch(`/ai-blog/delete/${this.articleToDelete}`, {
+                    fetch(`/dashboard/ai-blog/delete/${this.articleToDelete}`, {
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
