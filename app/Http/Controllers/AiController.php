@@ -99,29 +99,20 @@ class AiController extends Controller
                 'message' => 'AI Provider Error: ' . $errorMessage
             ], $response->status());
     
-        // } catch (\Exception $e) {
-        //     // 8. Penanganan Error Sistem (Timeout, cURL, dsb)
-        //     $msg = $e->getMessage();
-            
-        //     // Deteksi jika ini adalah masalah timeout murni
-        //     if (str_contains($msg, 'timed out')) {
-        //         $msg = "Proses terlalu lama. DeepSeek sedang sibuk atau kode terlalu kompleks.";
-        //     }
-    
-        //     Log::critical("System Error Generate: " . $msg);
-    
-        //     return response()->json([
-        //         'success' => false, 
-        //         'message' => 'System Error: ' . $msg
-        //     ], 500);
-        // }
         } catch (\Exception $e) {
-            // Balikan error asli agar kita bisa lihat di Inspect Element > Network
+            // 8. Penanganan Error Sistem (Timeout, cURL, dsb)
+            $msg = $e->getMessage();
+            
+            // Deteksi jika ini adalah masalah timeout murni
+            if (str_contains($msg, 'timed out')) {
+                $msg = "Proses terlalu lama. DeepSeek sedang sibuk atau kode terlalu kompleks.";
+            }
+    
+            Log::critical("System Error Generate: " . $msg);
+    
             return response()->json([
                 'success' => false, 
-                'message' => 'DEBUG ERROR: ' . $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'message' => 'System Error: ' . $msg
             ], 500);
         }
     }

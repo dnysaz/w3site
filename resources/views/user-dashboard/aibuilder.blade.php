@@ -59,11 +59,13 @@
                     this.openModal('error', 'Gagal', data.message);
                 }
             })
-            .catch(() => { 
+            .catch((err) => { 
                 this.isGenerating = false;
                 clearInterval(interval);
-                this.openModal('error', 'Network Error', 'Gagal memproses AI.'); 
+                console.error('AI Generation Error Detail:', err);
+                this.openModal('error', 'Network Error', 'Gagal memproses AI: ' + err.message); 
             })
+        })
             .finally(() => { 
                 setTimeout(() => { this.isGenerating = false; }, 1500);
             });
