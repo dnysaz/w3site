@@ -42,57 +42,28 @@
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 body: JSON.stringify({ prompt: this.promptText })
             })
-            .then(async (res) => {
-    // Jika respon bukan 200-299
-    if (!res.ok) {
-        const contentType = res.headers.get('content-type');
-        let errorMsg = `Server Error (${res.status})`;
-
-        if (contentType && contentType.includes('application/json')) {
-            // Jika server kirim JSON error
-            const errData = await res.json();
-            errorMsg = errData.message || errorMsg;
-        } else {
-            // Jika server kirim HTML (Error 500), ambil cuplikan teksnya
-            const textError = await res.text();
-            // Mengambil judul error dari HTML Laravel jika ada
-            const match = textError.match(/<title>(.*?)<\/title>/);
-            errorMsg = match ? `Server Error: ${match[1]}` : 'Server mengalami gangguan (Internal Error 500)';
-            
-            // Log HTML mentah ke console agar bisa di-inspect
-            console.error('Full HTML Error Response:', textError);
-        }
-        throw new Error(errorMsg);
-    }
-    return res.json();
-})
-.then(data => {
-    if(data.success) {
-        this.progress = 100;
-        this.progressText = 'Selesai! Menyempurnakan tampilan...';
-        this.generatedHtml = data.html;
-        setTimeout(() => {
-            const iframe = document.getElementById('previewFrame');
-            iframe.srcdoc = data.html;
-            clearInterval(interval);
-        }, 500);
-    } else {
-        throw new Error(data.message || 'Gagal memproses data AI');
-    }
-})
-.catch((err) => { 
-    this.isGenerating = false;
-    clearInterval(interval);
-    
-    // Log lengkap untuk developer
-    console.error('--- AI DEBUG LOG ---');
-    console.error('Message:', err.message);
-    console.error('Stack:', err);
-    console.error('--------------------');
-
-    // Tampilkan pesan yang manusiawi di modal
-    this.openModal('error', 'Gagal Memproses', err.message); 
-})
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    this.progress = 100;
+                    this.progressText = 'Selesai! Menyempurnakan tampilan...';
+                    this.generatedHtml = data.html;
+                    setTimeout(() => {
+                        const iframe = document.getElementById('previewFrame');
+                        iframe.srcdoc = data.html;
+                        clearInterval(interval);
+                    }, 500);
+                } else {
+                    this.isGenerating = false;
+                    clearInterval(interval);
+                    this.openModal('error', 'Gagal', data.message);
+                }
+            })
+            .catch(() => { 
+                this.isGenerating = false;
+                clearInterval(interval);
+                this.openModal('error', 'Network Error', 'Gagal memproses AI, Mohon dicoba kembali nanti.'); 
+            })
             .finally(() => { 
                 setTimeout(() => { this.isGenerating = false; }, 1500);
             });
