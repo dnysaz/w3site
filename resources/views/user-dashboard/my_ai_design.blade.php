@@ -293,7 +293,7 @@
                         this.deployModal.show = false;
                         this.notify('Berhasil!', 'Landing Page berhasil dipasang.', 'success');
                         
-                        setTimeout(() => window.location.href = '/mysite', 2000);
+                        setTimeout(() => window.location.href = '/dashboard/mysite', 2000);
     
                     } catch (error) {
                         this.isProcessing = false;
