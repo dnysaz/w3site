@@ -62,7 +62,11 @@
             .catch((err) => { 
                 this.isGenerating = false;
                 clearInterval(interval);
+                
+                // Menampilkan error detail di Console Log (F12 -> Console)
                 console.error('AI Generation Error Detail:', err);
+
+                // Opsional: Menampilkan pesan error spesifik di modal agar user tahu penyebabnya
                 this.openModal('error', 'Network Error', 'Gagal memproses AI: ' + err.message); 
             })
         })
