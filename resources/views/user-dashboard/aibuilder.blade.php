@@ -69,7 +69,6 @@
                 // Opsional: Menampilkan pesan error spesifik di modal agar user tahu penyebabnya
                 this.openModal('error', 'Network Error', 'Gagal memproses AI: ' + err.message); 
             })
-        })
             .finally(() => { 
                 setTimeout(() => { this.isGenerating = false; }, 1500);
             });
