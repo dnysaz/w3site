@@ -23,3 +23,6 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /storage/app/env_backups/
+
+# xflow tunnel config
+.xflow

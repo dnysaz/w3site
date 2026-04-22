@@ -56,25 +56,13 @@
                         class="p-2 hover:bg-slate-100 rounded-xl text-slate-500 transition-colors">
                     <i class="fas fa-bars-staggered"></i>
                 </button>
-                <h1 class="font-black text-xl tracking-tighter text-slate-900">
-                    <a href="{{ route("dashboard") }}">w3<span class="text-blue-600">site.</span><span class="text-[10px] text-slate-400 tracking-widest">Admin</span>
+                <h1 class="font-black text-[22px] tracking-tight text-slate-900">
+                    <a href="{{ route("dashboard") }}">w3<span class="text-blue-600">site.</span><span class="text-[12px] text-slate-400 tracking-widest ml-1">Admin</span>
                     </a>
                 </h1>
             </div>
             
-            <div class="flex items-center gap-4">
-                <a href="{{ route('admin.chat') }}" class="relative p-2 text-slate-400 hover:text-blue-600 transition-colors group">
-                    <i class="fa-solid fa-comment-dots text-xl"></i>
-                    
-                    <div id="msgBadge" class="hidden absolute -top-1 -right-1 flex items-center gap-1 bg-red-500 text-[9px] text-white px-1.5 py-0.5 rounded-full border-2 border-white shadow-sm animate-bounce font-black">
-                        <span id="adminUnreadCount">0</span>
-                    </div>
-                    
-                    <div class="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-[1.2rem] p-3 opacity-0 group-hover:opacity-100 pointer-events-none transition-all z-50">
-                        <p id="msgStatusText" class="text-[10px] font-black text-slate-400 tracking-widest">Tidak ada pesan</p>
-                    </div>
-                </a>
-            
+
                 <div class="flex items-center gap-3 pl-4 border-l border-slate-100">
                     {{-- Icon Profile --}}
                     <div class="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200 transition-transform hover:scale-105">
@@ -83,13 +71,12 @@
             
                     {{-- Nama User --}}
                     <div class="flex flex-col">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Admin Mode</span>
-                        <span class="text-sm font-black text-slate-900 tracking-tight leading-none uppercase">
+                        <span class="text-[11px] font-black text-slate-500 tracking-widest leading-none mb-1">Admin Mode</span>
+                        <span class="text-[15px] font-black text-slate-900 tracking-tight leading-none">
                             {{ auth()->user()->name }}
                         </span>
                     </div>
                 </div>
-            </div>
         </nav>
 
         <div class="flex flex-1 overflow-hidden relative">
@@ -122,7 +109,7 @@
                         <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
                             <i class="fas fa-chart-pie text-sm"></i>
                         </div>
-                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">Ringkasan</span>
+                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-[15px] tracking-tight whitespace-nowrap">Overview</span>
                     </a>
 
                     <a href="{{ route('admin.users.index') }}" 
@@ -130,7 +117,7 @@
                         <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.users.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
                             <i class="fas fa-users text-sm"></i>
                         </div>
-                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">Pengguna</span>
+                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-[15px] tracking-tight whitespace-nowrap">Users</span>
                     </a>
 
                     <a href="{{ route('admin.sites.index') }}" 
@@ -138,31 +125,7 @@
                         <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.sites.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
                             <i class="fas fa-globe text-sm"></i>
                         </div>
-                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">Websites</span>
-                    </a>
-
-                    <a href="{{ route('admin.linktrees.index') }}" 
-                       class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.linktrees.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-slate-50' }}">
-                        <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.linktrees.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
-                            <i class="fas fa-share-nodes text-sm"></i>
-                        </div>
-                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">Bio Links</span>
-                    </a>
-
-                    <a href="{{ route('admin.shortlinks.index') }}" 
-                       class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.shortlinks.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-slate-50' }}">
-                        <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.shortlinks.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
-                            <i class="fas fa-link text-sm"></i>
-                        </div>
-                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">Shortlinks</span>
-                    </a>
-
-                    <a href="{{ route('admin.transactions.index') }}" 
-                       class="w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 group {{ request()->routeIs('admin.transactions.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-slate-50' }}">
-                        <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.transactions.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
-                            <i class="fas fa-credit-card text-sm"></i>
-                        </div>
-                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">Transaksi</span>
+                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-[15px] tracking-tight whitespace-nowrap">Websites</span>
                     </a>
 
                     <a href="{{ route('admin.settings.index') }}" 
@@ -170,7 +133,7 @@
                         <div class="w-10 h-10 flex-none rounded-xl flex items-center justify-center transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-white' }}">
                             <i class="fas fa-sliders-h text-sm"></i>
                         </div>
-                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-sm tracking-tight whitespace-nowrap">System Settings</span>
+                        <span x-show="sidebarOpen || mobileMenu" x-transition.opacity class="font-bold text-[15px] tracking-tight whitespace-nowrap">System Settings</span>
                     </a>
                     
                 </div>
@@ -209,52 +172,7 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
     </script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const SB_URL = "https://lymknuizgzhvufyvapwh.supabase.co";
-            const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5bWtudWl6Z3podnVmeXZhcHdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0OTQ1NTgsImV4cCI6MjA4NTA3MDU1OH0.UtTrgmN-IiT0Yn4Dy6ftWk79uI0HO0hARzUVDKZsk4w";
-            
-            const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
-            const adminBadge = document.getElementById('msgBadge');
-            const adminCount = document.getElementById('adminUnreadCount');
-            const statusText = document.getElementById('msgStatusText');
-            const isCurrentlyInAdminChat = "{{ request()->routeIs('admin.chat') }}";
-    
-            let totalNewMsgs = 0;
-    
-            // Listener hanya aktif jika admin tidak sedang di halaman chat admin
-            if (!isCurrentlyInAdminChat) {
-                supabaseClient
-                    .channel('admin-global-notif')
-                    .on('postgres_changes', { 
-                        event: 'INSERT', 
-                        schema: 'public', 
-                        table: 'discussions'
-                    }, payload => {
-                        const newMsg = payload.new;
-                        
-                        // Jika pesan dari USER (is_admin = false)
-                        if (String(newMsg.is_admin) === 'false') {
-                            totalNewMsgs++;
-                            
-                            // Update Badge UI
-                            adminCount.innerText = totalNewMsgs;
-                            adminBadge.classList.remove('hidden');
-                            
-                            // Update Tooltip UI
-                            statusText.innerText = `${totalNewMsgs} Pesan baru.`;
-                            statusText.classList.replace('text-slate-400', 'text-red-500');
-    
-                            // Suara Notif Admin (Lebih tegas)
-                            new Audio('https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3').play().catch(e => {});
-                        }
-                    })
-                    .subscribe();
-            }
-        });
-    </script>
+
 
     @stack('scripts')
 </body>

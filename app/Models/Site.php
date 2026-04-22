@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Site extends Model
 {
     // Mengizinkan mass assignment agar bisa disimpan lewat Controller
-    protected $fillable = ['user_id', 'subdomain', 'folder_path', 'status','repository_url','clicks_count'];
+    protected $fillable = ['user_id', 'subdomain', 'folder_path', 'status','repository_url','clicks_count', 'is_public'];
 
     /**
      * Relasi: Satu situs dimiliki oleh satu User

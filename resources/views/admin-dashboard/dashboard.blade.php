@@ -1,59 +1,40 @@
 <x-admin-layout>
-    <div class="mb-8">
-        <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tighter">
+    <div class="mb-10">
+        <h2 class="text-3xl font-black text-slate-900 tracking-tighter">
             System <span class="text-blue-600">Overview</span>
         </h2>
-        <p class="text-slate-500 text-sm font-medium">Monitoring data real-time platform w3site.</p>
+        <p class="text-slate-500 text-[15px] font-bold mt-1">Monitoring platform data in real-time.</p>
     </div>
 
     {{-- 1. Statistik Utama (Cards) --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all relative">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all">
             <div>
-                <div class="flex items-center gap-2">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Revenue</p>
-                    <button id="toggleRevenue" class="text-slate-400 hover:text-blue-600 transition-colors">
-                        <i class="fa-solid fa-eye text-[10px]" id="eyeIcon"></i>
-                    </button>
-                </div>
-                <h3 id="revenueValue" 
-                    class="text-2xl font-black text-slate-900 mt-1" 
-                    data-full="Rp {{ number_format($stats['total_revenue']) }}">
-                    Rp {{ number_format($stats['total_revenue']) }}
-                </h3>
+                <p class="text-[12px] font-black text-slate-400 tracking-widest">Total Users</p>
+                <h3 class="text-4xl font-black text-slate-900 mt-2">{{ number_format($stats['total_users']) }}</h3>
             </div>
-            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-wallet text-lg"></i>
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-users text-2xl"></i>
             </div>
         </div>
     
-        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all">
+        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all">
             <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Users</p>
-                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ number_format($stats['total_users']) }}</h3>
+                <p class="text-[12px] font-black text-slate-400 tracking-widest">Total Sites</p>
+                <h3 class="text-4xl font-black text-slate-900 mt-2">{{ number_format($stats['total_sites']) }}</h3>
             </div>
-            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-users text-lg"></i>
+            <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-globe text-2xl"></i>
             </div>
         </div>
     
-        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all">
+        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all">
             <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Sites</p>
-                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ number_format($stats['total_sites']) }}</h3>
+                <p class="text-[12px] font-black text-slate-400 tracking-widest">Total Visits</p>
+                <h3 class="text-4xl font-black text-slate-900 mt-2">{{ number_format($stats['total_visits']) }}</h3>
             </div>
-            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-globe text-lg"></i>
-            </div>
-        </div>
-    
-        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all">
-            <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Visits</p>
-                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ number_format($stats['total_visits']) }}</h3>
-            </div>
-            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-bolt-lightning text-lg"></i>
+            <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-bolt-lightning text-2xl"></i>
             </div>
         </div>
     </div>
@@ -66,8 +47,8 @@
                     <i class="fa-solid fa-server text-xl"></i>
                 </div>
                 <div>
-                    <h3 class="font-black text-slate-900 uppercase tracking-tighter text-lg">Server Health</h3>
-                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+                    <h3 class="font-black text-slate-900 tracking-tighter text-lg">Server Health</h3>
+                    <p class="text-slate-400 text-[10px] font-bold tracking-widest flex items-center gap-2">
                         <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                         System Online: {{ $serverStats['uptime'] }}
                     </p>
@@ -134,46 +115,70 @@
         </div>
     </div>
     
-    {{-- 4. Doughnut Charts & Content Dist --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-            <h3 class="font-black text-slate-800 mb-6 text-center text-sm uppercase tracking-widest">Paket Pengguna</h3>
-            <div class="h-64">
+            <h3 class="font-black text-slate-800 mb-6 text-center text-[13px] tracking-widest">User Package Distribution</h3>
+            <div class="h-72">
                 <canvas id="userPackageChart"></canvas>
             </div>
         </div>
     
         <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-            <h3 class="font-black text-slate-800 mb-6 text-center text-sm uppercase tracking-widest">Tipe Website</h3>
-            <div class="h-64">
+            <h3 class="font-black text-slate-800 mb-6 text-center text-[13px] tracking-widest">Website Type Distribution</h3>
+            <div class="h-72">
                 <canvas id="siteTypeChart"></canvas>
             </div>
         </div>
+    </div>
 
-        <div class="bg-blue-600 p-8 rounded-[2.5rem] shadow-xl shadow-blue-100 relative overflow-hidden flex flex-col justify-center">
-            <i class="fa-solid fa-chart-simple absolute -bottom-4 -right-4 text-white/10 text-9xl rotate-12"></i>
-            <div class="relative z-10 text-white">
-                <h3 class="font-black text-blue-100 mb-6 uppercase tracking-widest text-[10px]">Content Distribution</h3>
-                <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-6">
-                    <div class="border-r border-white/10 pr-4">
-                        <div class="flex items-center gap-2 mb-2 text-blue-200">
-                            <i class="fa-solid fa-link text-[10px]"></i>
-                            <span class="text-[10px] font-black uppercase tracking-tighter">Shortlinks</span>
-                        </div>
-                        <h2 class="text-4xl font-black mb-1">{{ number_format($stats['total_shortlinks']) }}</h2>
-                    </div>
-                    <div class="pl-4">
-                        <div class="flex items-center gap-2 mb-2 text-blue-200">
-                            <i class="fa-solid fa-share-nodes text-[10px]"></i>
-                            <span class="text-[10px] font-black uppercase tracking-tighter">Bio Links</span>
-                        </div>
-                        <h2 class="text-4xl font-black mb-1">{{ number_format($stats['total_linktrees']) }}</h2>
-                    </div>
-                </div>
-                <p class="mt-8 text-blue-100/80 text-[11px] leading-relaxed font-medium bg-white/10 p-3 rounded-2xl inline-block">
-                    <i class="fa-solid fa-circle-info mr-1"></i> Data akumulasi konten global.
-                </p>
-            </div>
+    {{-- 5. Latest Activity --}}
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden mb-8">
+        <div class="p-8 border-b border-slate-50 flex items-center justify-between">
+            <h3 class="font-black text-slate-900 tracking-tighter text-lg">Latest Activity</h3>
+            <span class="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[11px] font-black tracking-widest">Live Updates</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-slate-50/50">
+                        <th class="px-8 py-4 text-[11px] font-black text-slate-400 tracking-widest">Time</th>
+                        <th class="px-8 py-4 text-[11px] font-black text-slate-400 tracking-widest">Page / Subdomain</th>
+                        <th class="px-8 py-4 text-[11px] font-black text-slate-400 tracking-widest">Location</th>
+                        <th class="px-8 py-4 text-[11px] font-black text-slate-400 tracking-widest">Browser</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    @forelse($latest_visits as $visit)
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-8 py-5">
+                                <p class="text-[14px] font-bold text-slate-900">{{ $visit->created_at->diffForHumans() }}</p>
+                                <p class="text-[11px] text-slate-400 font-medium">{{ $visit->created_at->format('H:i:s') }}</p>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-[13px] font-bold">{{ $visit->subdomain ?? 'Main Site' }}</span>
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[14px] font-bold text-slate-900">{{ $visit->country ?? 'Unknown' }}</span>
+                                    <span class="text-[11px] text-slate-400 font-medium">{{ $visit->city ?? '' }}</span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex items-center gap-2 text-slate-600">
+                                    <i class="fa-brands fa-{{ strtolower($visit->browser) }} text-sm"></i>
+                                    <span class="text-[13px] font-bold text-slate-900">{{ $visit->browser }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-8 py-12 text-center">
+                                <p class="text-[15px] font-bold text-slate-400">No activity recorded yet.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -262,32 +267,6 @@
             }
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleBtn = document.getElementById('toggleRevenue');
-            const revenueText = document.getElementById('revenueValue');
-            const eyeIcon = document.getElementById('eyeIcon');
-            
-            let isHidden = localStorage.getItem('revenueHidden') === 'true';
-    
-            const updateDisplay = (hidden) => {
-                if (hidden) {
-                    revenueText.innerText = 'Rp ••••••••';
-                    eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
-                } else {
-                    revenueText.innerText = revenueText.getAttribute('data-full');
-                    eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
-                }
-            };
-    
-            updateDisplay(isHidden);
-    
-            toggleBtn.addEventListener('click', function() {
-                isHidden = !isHidden;
-                localStorage.setItem('revenueHidden', isHidden);
-                updateDisplay(isHidden);
-            });
-        });
-    </script>
+    {{-- Removed toggle script as revenue card is gone --}}
     @endpush
 </x-admin-layout>

@@ -22,15 +22,10 @@ class GitDeployController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->get(['id', 'subdomain', 'repository_url']);
     
-        // Mapping limit sederhana untuk validasi di view jika perlu
-        $limits = [0 => 2, 1 => 10, 2 => 20];
-        $limit = $limits[$user->package] ?? 2;
-    
         return view('user-dashboard.deploy_github', [
             'sites' => $sites,
             'subdomain' => $subdomain, // Diambil dari route parameter
             'siteCount' => $sites->count(),
-            'limit' => $limit,
         ]);
     }
 
@@ -59,7 +54,7 @@ class GitDeployController extends Controller
             
             // Pastikan script tersebut ada
             if (!File::exists($scriptPath)) {
-                return response()->json(['message' => 'Script deploy tidak ditemukan.'], 500);
+                return response()->json(['message' => 'Deployment script not found.'], 500);
             }
     
             $process = new Process(['php', $scriptPath, $subdomain, $request->repository_url]);
@@ -70,8 +65,8 @@ class GitDeployController extends Controller
     
             if (!$process->isSuccessful() || $output !== 'SUCCESS') {
                 return response()->json([
-                    'message' => 'Gagal menarik data dari GitHub.',
-                    'debug' => $output // Optional: hapus jika sudah produksi
+                    'message' => 'Failed to pull data from GitHub.',
+                    'debug' => $output // Optional: remove in production
                 ], 500);
             }
     
@@ -85,10 +80,10 @@ class GitDeployController extends Controller
                 'status' => 'active'
             ]);
     
-            return response()->json(['message' => 'Deployment GitHub Berhasil!']);
+            return response()->json(['message' => 'GitHub deployment successful!']);
     
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
 
@@ -99,7 +94,7 @@ class GitDeployController extends Controller
         $site = Site::where('id', $id)->where('user_id', $user->id)->firstOrFail();
 
         if (!$site->repository_url) {
-            return response()->json(['message' => 'Situs ini tidak terhubung ke GitHub.'], 400);
+            return response()->json(['message' => 'This site is not connected to GitHub.'], 400);
         }
 
         try {
@@ -111,10 +106,10 @@ class GitDeployController extends Controller
             $process->run();
 
             if (!$process->isSuccessful() || trim($process->getOutput()) !== 'SUCCESS') {
-                return response()->json(['message' => 'Gagal sinkronisasi data.'], 500);
+                return response()->json(['message' => 'Failed to sync data.'], 500);
             }
 
-            return response()->json(['message' => 'Update berhasil ditarik!']);
+            return response()->json(['message' => 'Update successfully pulled!']);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }

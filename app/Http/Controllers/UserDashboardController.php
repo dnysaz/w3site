@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
 use App\Models\Site;
-use App\Models\Shortlink;
-use App\Models\AiDesign;
-use App\Models\Linktree;
-
 
 class UserDashboardController extends Controller
 {
@@ -24,50 +20,12 @@ class UserDashboardController extends Controller
     {
         $user = Auth::user();
         
-        // 1. Ambil Data Dasar
         $sites = Site::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
-        $linkCount = Shortlink::where('user_id', $user->id)->count();
-        
-        // AMBIL DATA LINKTREE
-        $linktreeCount = Linktree::where('user_id', $user->id)->count();
     
-        // 2. Mapping Konfigurasi Paket (Tambahkan limit Linktree)
-        $packageMap = [
-            0 => [
-                'name' => 'Gratis', 
-                'limit' => 2, 
-                'storage' => 256, 
-                'storage_unit' => 'Mb',
-                'shortlink' => 10,
-                'linktree' => 10, // Limit Linktree Gratis
-                'color' => 'slate',
-                'icon' => 'fa-seedling'
-            ],
-            1 => [
-                'name' => 'Pemula', 
-                'limit' => 10, 
-                'storage' => 512, 
-                'storage_unit' => 'Mb',
-                'shortlink' => 100,
-                'linktree' => 100, // Limit Linktree Pemula
-                'color' => 'blue',
-                'icon' => 'fa-rocket'
-            ],
-            2 => [
-                'name' => 'Pro', 
-                'limit' => 20, 
-                'storage' => 1024, 
-                'storage_unit' => 'Mb',
-                'shortlink' => 1000,
-                'linktree' => 1000, // Limit Linktree Pro
-                'color' => 'indigo',
-                'icon' => 'fa-briefcase'
-            ],
-        ];
-    
-        $currentPkg = $packageMap[$user->package] ?? $packageMap[0];
-    
-        // 3. Logika Hitung Storage SSD (Tetap sama)
+        // Fixed limit: 512MB
+        $storageLimitMb = 512;
+
+        // Logika Hitung Storage SSD
         $totalSizeByte = 0;
         $storageRoot = dirname(base_path()) . DIRECTORY_SEPARATOR . 'users-data';
         foreach ($sites as $site) {
@@ -78,34 +36,17 @@ class UserDashboardController extends Controller
         }
         $totalSizeMb = round($totalSizeByte / (1024 * 1024), 2);
         
-        // 4. Hitung Persentase
-        $storagePercent = min(($totalSizeMb / $currentPkg['storage']) * 100, 100);
+        // Hitung Persentase Storage
+        $storagePercent = min(($totalSizeMb / $storageLimitMb) * 100, 100);
         $siteCount = $sites->count();
-        $isFull = $siteCount >= $currentPkg['limit'];
-        $percentUsage = ($currentPkg['limit'] > 0) ? ($siteCount / $currentPkg['limit']) * 100 : 0;
     
-        $isUnlimitedLink = $currentPkg['shortlink'] > 1000;
-        $linkLimitText = $isUnlimitedLink ? '∞' : $currentPkg['shortlink'];
-        $linkPercent = ($isUnlimitedLink) ? 100 : ($linkCount / $currentPkg['shortlink']) * 100;
-    
-        // HITUNG PERSENTASE LINKTREE
-        $ltLimit = $currentPkg['linktree'];
-        $ltPercent = ($linktreeCount / $ltLimit) * 100;
-    
-        // 5. Kirim semua variabel ke View
+        // Kirim ke View
         return view('user-dashboard.dashboard', compact(
-            'user', 'siteCount', 'isUnlimitedLink', 'sites', 'linkCount', 'currentPkg', 
-            'totalSizeMb', 'storagePercent', 'isFull', 'percentUsage', 'linkLimitText', 
-            'linkPercent', 'linktreeCount', 'ltPercent', 'ltLimit'
+            'user', 'siteCount', 'sites', 
+            'totalSizeMb', 'storagePercent'
         ));
     }
 
-    public function aibuilder()
-    {
-        $aiStats = auth()->user()->getAiStats();
-
-        return view('user-dashboard.aibuilder', compact('aiStats'));
-    }
 
     public function profile()
     {
@@ -158,73 +99,17 @@ class UserDashboardController extends Controller
         $sites = Site::where('user_id', $user->id)
                     ->orderBy('created_at', 'desc')
                     ->get();
-    
-        $linkCount = Shortlink::where('user_id', $user->id)->count();
-    
-        // Mapping Paket (Logika dari blok @php Anda)
-        $packageMap = [
-            0 => ['name' => 'Gratis', 'limit' => 2, 'color' => 'slate', 'hex' => '#64748b', 'icon' => 'fa-seedling'],
-            1 => ['name' => 'Pemula', 'limit' => 10, 'color' => 'blue', 'hex' => '#2563eb', 'icon' => 'fa-rocket'],
-            2 => ['name' => 'Pro', 'limit' => 20, 'color' => 'indigo', 'hex' => '#4f46e5', 'icon' => 'fa-crown'],
-        ];
-    
-        // Ambil data paket berdasarkan kolom 'package' di database
-        $currentPkg = $packageMap[$user->package] ?? $packageMap[0];
-        
-        // Hitung status paket
         $siteCount = $sites->count();
-        $currentPkg = $packageMap[$user->package] ?? $packageMap[0];
-        $limit = $currentPkg['limit'];
-
-        // --- LOGIKA MASA AKTIF YANG DIPERBAIKI ---
-        if ($user->package == 0) {
-            // Jika paket 0 (Gratis)
-            $expiredDate = 'Selamanya';
-        } else {
-            // Jika paket berbayar (1 atau 2)
-            $expiredDate = $user->package_expired_at 
-                ? \Carbon\Carbon::parse($user->package_expired_at)->translatedFormat('d M Y') 
-                : 'Belum Aktif'; // Jika pro tapi tanggalnya kosong (safety check)
-        }
-        // ------------------------------------------
-
-        $isFull = $siteCount >= $limit;
-        $remaining = max(0, $limit - $siteCount);
-        $percentage = ($siteCount / $limit) * 100;
+        $expiredDate = 'Forever';
     
         // Kirim semua variabel ke view
         return view('user-dashboard.mysite', compact(
             'sites', 
-            'linkCount', 
-            'currentPkg', 
-            'limit', 
             'siteCount', 
-            'isFull', 
-            'remaining', 
-            'percentage', 
             'expiredDate'
         ));
     }
 
-    public function ai_magic_tools()
-    {
-        // Hitung jumlah desain milik user yang sedang login
-        $aiDesignCount = AiDesign::where('user_id', Auth::id())->count();
-    
-        return view('user-dashboard.ai_page', compact('aiDesignCount'));
-    }
-
-    public function my_ai_design()
-    {
-        $designs = AiDesign::where('user_id', auth()->id())
-                    ->latest()
-                    ->get();
-                    
-        // Ambil data sites untuk modal deploy
-        $sites = auth()->user()->sites; 
-
-        return view('user-dashboard/my_ai_design', compact('designs', 'sites'));
-    }
 
 
     public function destroy(Request $request): RedirectResponse
@@ -253,7 +138,7 @@ class UserDashboardController extends Controller
 
                     $output = trim($process->getOutput());
                     if (!$process->isSuccessful() || $output !== 'DESTROYED') {
-                        Log::error("Destroy Gagal untuk subdomain: {$site->subdomain}. Output: " . $output);
+                        Log::error("Destroy failed for subdomain: {$site->subdomain}. Output: " . $output);
                     }
                 }
             }
@@ -273,7 +158,7 @@ class UserDashboardController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Akun dan seluruh aset website Anda telah berhasil dihapus secara permanen.');
+        return redirect('/')->with('success', 'Your account and all website assets have been permanently deleted.');
     }
 
 

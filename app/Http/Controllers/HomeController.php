@@ -16,7 +16,9 @@ class HomeController extends Controller
         $this->logVisit();
 
         // 2. Ambil data Site terbaru (Logika asli kamu)
-        $latestSites = Site::latest()
+        $latestSites = Site::where('status', 'active')
+                        ->where('is_public', true)
+                        ->latest()
                         ->take(10)
                         ->get();
     

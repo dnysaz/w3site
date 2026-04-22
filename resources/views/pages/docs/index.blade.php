@@ -1,210 +1,182 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation Full - w3site.id</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/png" href="{{ asset('favicon.png') }}"><link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>Documentation — w3site.id</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-        .docs-content h3 { font-size: 2.25rem; font-weight: 1000; font-style: italic; color: #0f172a; margin-top: 4rem; margin-bottom: 1.5rem; letter-spacing: -0.05em; line-height: 1; border-left: 8px solid #2563eb; padding-left: 1.5rem; }
-        .docs-content h4 { font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-top: 2.5rem; margin-bottom: 1rem; display: flex; items-center; gap: 0.5rem; }
-        .docs-content p { color: #64748b; line-height: 1.8; margin-bottom: 1.5rem; }
-        .code-display { background: #0f172a; color: #f8fafc; padding: 1.5rem; border-radius: 1.5rem; font-family: 'Fira Code', monospace; font-size: 0.85rem; margin-bottom: 1.5rem; border: 1px solid #1e293b; overflow-x: auto; }
-        .sidebar-link { transition: all 0.3s; border-left: 4px solid transparent; }
-        .sidebar-link.active { color: #2563eb; font-weight: 800; border-left: 4px solid #2563eb; background: #f8faff; }
-        .feature-card { border: 1px solid #f1f5f9; border-radius: 2.5rem; padding: 2.5rem; background: #fff; transition: all 0.3s; }
-        .feature-card:hover { border-color: #dbeafe; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
+        * { font-family: 'Geist', 'Inter', sans-serif; }
+        [x-cloak] { display: none !important; }
+        .docs-section h2 { font-size: 32px; font-weight: 900; letter-spacing: -0.04em; color: #171717; margin-bottom: 16px; line-height: 1; }
+        .docs-section h3 { font-size: 20px; font-weight: 800; color: #171717; margin-top: 40px; margin-bottom: 12px; letter-spacing: -0.02em; }
+        .docs-section p { font-size: 16px; color: #666; line-height: 1.6; margin-bottom: 20px; font-medium; }
+        .code-block { background: #fafafa; border: 1px border-[#eaeaea]; padding: 24px; border-radius: 16px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 14px; margin: 24px 0; color: #444; font-weight: 500; }
+        .sidebar-item { font-size: 14px; padding: 10px 16px; border-radius: 12px; color: #888; transition: all 0.2s; display: block; border: 1px border-transparent; font-weight: 600; }
+        .sidebar-item.active { background: #fafafa; color: #000; border-color: #eaeaea; }
+        .sidebar-item:hover:not(.active) { color: #000; background: #fafafa/50; }
     </style>
 </head>
-<body class="bg-white antialiased">
+<body class="bg-white text-[#171717] antialiased" x-data="{ currentSection: 'intro', mobileOpen: false }">
 
-    {{-- Navigation --}}
-    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="{{ route('home') }}" class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black italic text-sm">w3</div>
-                <span class="text-xl font-black tracking-tighter text-slate-900">w3site<span class="text-blue-600">.id</span></span>
-            </a>
-            <div class="flex items-center gap-4">
-                <a href="{{ route('dashboard') }}" class="text-xs font-black tracking-widest text-blue-600 uppercase border-2 border-blue-600 px-5 py-2.5 rounded-2xl hover:bg-blue-600 hover:text-white transition-all">Dashboard</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="max-w-7xl mx-auto px-6 pt-32 pb-24">
-        <div class="flex flex-col lg:flex-row gap-16">
-            
-            {{-- Sidebar Navigasi --}}
-            <aside class="lg:w-72 flex-shrink-0 lg:sticky lg:top-32 h-[calc(100vh-160px)] overflow-y-auto pr-4">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6">Navigasi Utama</p>
-                <nav class="space-y-1">
-                    <a href="#struktur" class="sidebar-link block py-3 px-4 text-sm font-bold text-slate-500 hover:text-blue-600">01. Struktur File</a>
-                    <a href="#cara-zip" class="sidebar-link block py-3 px-4 text-sm font-bold text-slate-500 hover:text-blue-600">02. Upload ZIP</a>
-                    <a href="#frameworks" class="sidebar-link block py-3 px-4 text-sm font-bold text-slate-500 hover:text-blue-600">03. Framework JS (Vite/Next)</a>
-                    <a href="#cara-github" class="sidebar-link block py-3 px-4 text-sm font-bold text-slate-500 hover:text-blue-600">04. Integrasi GitHub</a>
-                    <a href="#database" class="sidebar-link block py-3 px-4 text-sm font-bold text-slate-500 hover:text-blue-600">05. Database & BaaS</a>
-                    <a href="#faq" class="sidebar-link block py-3 px-4 text-sm font-bold text-slate-500 hover:text-blue-600">06. FAQ</a>
-                </nav>
-            </aside>
-
-            {{-- Konten Utama --}}
-            <div class="flex-1 max-w-3xl docs-content">
-                
-                <section id="struktur">
-                    <h2 class="text-6xl font-[1000] text-slate-900 tracking-tighter italic mb-8 leading-[0.9]">Aturan <span class="text-blue-600">Deployment.</span></h2>
-                    <p class="text-lg">w3site.id menghosting situs Anda sebagai <span class="font-bold underline">Static Site</span>. Ini berarti server kami mencari file HTML siap saji untuk ditampilkan ke pengunjung.</p>
-                    
-                    <h4>Struktur Folder Standar</h4>
-                    <p>Pastikan file <code class="text-blue-600 font-bold">index.html</code> Anda berada di folder paling luar (Root). Inilah yang akan pertama kali dibaca oleh sistem.</p>
-                    <div class="code-display">
-                        📁 my-website/<br>
-                        ├── 📄 <span class="text-emerald-400">index.html</span> (Halaman Utama)<br>
-                        ├── 📁 css/<br>
-                        │   └── style.css<br>
-                        ├── 📁 js/<br>
-                        │   └── script.js<br>
-                        └── 📁 images/<br>
-                            └── logo.png
-                    </div>
-                </section>
-
-                <section id="cara-zip">
-                    <h3>Cara Upload ZIP</h3>
-                    <p>Metode tercepat untuk web HTML/CSS/JS murni. Cukup bungkus project Anda menjadi ZIP dan kirim ke server kami.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-6 bg-slate-50 rounded-3xl">
-                            <h5 class="font-black text-slate-900 text-xs uppercase mb-2">Langkah 1</h5>
-                            <p class="text-xs">Masuk ke folder project, pilih semua file (Ctrl+A), klik kanan dan pilih **Compress to ZIP**.</p>
-                        </div>
-                        <div class="p-6 bg-slate-50 rounded-3xl">
-                            <h5 class="font-black text-slate-900 text-xs uppercase mb-2">Langkah 2</h5>
-                            <p class="text-xs">Upload file ZIP tersebut ke dashboard w3site.id. Tunggu 3 detik, dan web Anda online!</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="frameworks">
-                    <h3>Modern Frameworks</h3>
-                    <p>Kami mendukung framework JS modern. Kuncinya adalah melakukan **Static Export** sebelum melakukan upload.</p>
-                    
-                    <div class="space-y-6">
-                        <div class="feature-card">
-                            <div class="flex items-center gap-3 mb-4">
-                                <i class="fa-brands fa-js-square text-3xl text-black"></i>
-                                <h4 class="mt-0 mb-0 italic uppercase tracking-tighter">Next.js (SSG)</h4>
-                            </div>
-                            <p class="text-sm">Ubah konfigurasi di <code class="font-bold">next.config.js</code> agar menghasilkan file statis:</p>
-                            <div class="code-display text-xs">
-                                const nextConfig = {<br>
-                                &nbsp;&nbsp;output: 'export',<br>
-                                }
-                            </div>
-                            <p class="text-[11px] mt-4">Jalankan <code class="font-bold">npm run build</code>. Upload hanya isi folder <span class="text-blue-600 font-bold">/out</span>.</p>
-                        </div>
-
-                        <div class="feature-card">
-                            <div class="flex items-center gap-3 mb-4">
-                                <i class="fa-brands fa-react text-3xl text-blue-400"></i>
-                                <h4 class="mt-0 mb-0 italic uppercase tracking-tighter">React / Vue / Vite</h4>
-                            </div>
-                            <p class="text-sm">Vite secara otomatis melakukan build ke aset statis. Anda hanya perlu menjalankan perintah:</p>
-                            <div class="code-display text-xs">
-                                npm run build
-                            </div>
-                            <p class="text-[11px] mt-4 italic">Setelah selesai, upload isi folder <span class="text-blue-600 font-bold">/dist</span> ke platform kami.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="cara-github">
-                    <h3>Integrasi GitHub</h3>
-                    <p>Malas upload manual? Hubungkan repositori GitHub Anda. Kami akan menarik data setiap kali Anda melakukan perubahan.</p>
-                    
-                    <div class="bg-blue-50 p-8 rounded-[2.5rem] border border-blue-100">
-                        <h4 class="mt-0 text-blue-900 italic tracking-tighter uppercase">Cara Copy URL Repositori:</h4>
-                        <ol class="list-decimal ml-5 space-y-3 text-sm text-blue-800 font-medium">
-                            <li>Buka halaman repositori Anda di GitHub.</li>
-                            <li>Klik tombol hijau <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs">Code</span>.</li>
-                            <li>Pastikan tab **HTTPS** terpilih, lalu klik ikon salin (copy).</li>
-                        </ol>
-                        <div class="mt-6 bg-white p-4 rounded-xl border border-blue-200">
-                            <p class="text-[10px] font-black text-slate-400 uppercase mb-2 leading-none">Contoh Link Yang Dimasukkan:</p>
-                            <code class="text-blue-600 font-bold text-xs break-all">https://github.com/akun-anda/nama-project.git</code>
-                        </div>
-                        <p class="mt-4 text-[11px] text-blue-600 italic font-bold">* Pastikan repositori Anda bersifat PUBLIC.</p>
-                    </div>
-                </section>
-
-                <section id="database">
-                    <h3>Database & Penyimpanan Data</h3>
-                    <p>Karena w3site.id bersifat statis, Anda tidak bisa menggunakan database MySQL tradisional di sini. Gunakan **BaaS** (Backend as a Service).</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="p-8 border border-slate-100 rounded-[2.5rem]">
-                            <h5 class="font-black italic text-slate-900 mb-2">Supabase / Firebase</h5>
-                            <p class="text-xs leading-relaxed">Gunakan SDK JavaScript mereka untuk fitur Login dan Database. Sangat kencang dan aman.</p>
-                        </div>
-                        <div class="p-8 border border-slate-100 rounded-[2.5rem]">
-                            <h5 class="font-black italic text-slate-900 mb-2">SQLite (WASM)</h5>
-                            <p class="text-xs leading-relaxed">Cocok untuk aplikasi offline. Database disimpan langsung di browser pengguna.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="faq" class="mb-20">
-                    <h3>F.A.Q</h3>
-                    <div class="space-y-4">
-                        <details class="group p-6 border border-slate-100 rounded-3xl bg-white cursor-pointer">
-                            <summary class="flex items-center justify-between font-bold text-slate-900 italic">
-                                Kenapa muncul Error 404?
-                                <span class="text-blue-600 group-open:rotate-180 transition-all"><i class="fa-solid fa-chevron-down"></i></span>
-                            </summary>
-                            <p class="text-sm mt-4 text-slate-500 border-t pt-4">Itu berarti file <strong>index.html</strong> Anda tidak ditemukan. Periksa apakah file tersebut ada di folder paling luar ZIP Anda, bukan di dalam sub-folder.</p>
-                        </details>
-                        <details class="group p-6 border border-slate-100 rounded-3xl bg-white cursor-pointer">
-                            <summary class="flex items-center justify-between font-bold text-slate-900 italic">
-                                Apakah mendukung PHP?
-                                <span class="text-blue-600 group-open:rotate-180 transition-all"><i class="fa-solid fa-chevron-down"></i></span>
-                            </summary>
-                            <p class="text-sm mt-4 text-slate-500 border-t pt-4">Tidak. Kami fokus pada Static Hosting (HTML, CSS, JS). Untuk backend, gunakan API pihak ketiga atau layanan BaaS seperti Supabase.</p>
-                        </details>
-                    </div>
-                </section>
-
-                <div class="bg-gray-900 p-12 rounded-[4rem] text-white text-center">
-                    <h2 class="text-4xl font-[1000] italic mb-4 tracking-tighter">Butuh Bantuan Personal?</h2>
-                    <p class="text-blue-100 mb-10 max-w-lg mx-auto">Tim kami siap membantu proses deployment Anda jika mengalami kesulitan teknis.</p>
-                    <a href="" class="inline-block px-10 py-5 bg-white text-blue-600 rounded-2xl font-black italic tracking-tighter hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1">
-                        Chat WhatsApp Sekarang
-                    </a>
+    <header class="sticky top-0 z-[100] bg-white/70 backdrop-blur-xl border-b border-[#eaeaea]">
+        <nav class="max-w-7xl mx-auto px-6 h-14 flex justify-between items-center">
+            <div class="flex items-center gap-8">
+                <a href="/" class="flex items-center gap-2 group">
+                    <span class="flex items-center justify-center border-2 border-black rounded w-6 h-6 font-bold text-[13px] tracking-tighter group-hover:bg-black group-hover:text-white transition-all">w</span>
+                    <span class="text-sm font-bold tracking-tight">w3site<span class="text-zinc-400">.id</span></span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="/#features" class="text-[13px] text-[#666] hover:text-black transition-colors">Features</a>
+                    <a href="{{ route('showcase.index') }}" class="text-[13px] text-[#666] hover:text-black transition-colors">Showcase</a>
+                    <a href="{{ route('docs.index') }}" class="text-[13px] font-bold text-black border-b border-black">Docs</a>
                 </div>
-
             </div>
-        </div>
+            <div class="flex items-center gap-4">
+                @auth
+                    <a href="{{ route('dashboard') }}" class="text-[13px] font-bold px-5 h-9 flex items-center bg-black text-white rounded-full hover:bg-zinc-800 transition-all">Dashboard</a>
+                @else
+                    <a href="{{ route('login') }}" class="text-[13px] font-bold text-[#666] hover:text-black transition-colors">Log In</a>
+                    <a href="{{ route('register') }}" class="text-[13px] font-bold px-5 h-9 flex items-center bg-black text-white rounded-full hover:bg-zinc-800 transition-all">Sign Up</a>
+                @endauth
+                <button @click="mobileOpen = !mobileOpen" class="md:hidden text-black p-1">
+                    <i class="fa-solid" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-16 flex flex-col md:flex-row gap-16">
+        
+        {{-- SIDEBAR --}}
+        <aside class="w-full md:w-64 shrink-0" :class="mobileOpen ? 'block' : 'hidden md:block'">
+            <div class="sticky top-24 space-y-8">
+                <div>
+                    <h4 class="text-[11px] font-black text-zinc-300 tracking-[0.2em] mb-4 px-4 uppercase">Guides</h4>
+                    <nav class="space-y-1">
+                        <a href="#intro" @click="currentSection = 'intro'" :class="currentSection === 'intro' ? 'active' : ''" class="sidebar-item">Introduction</a>
+                        <a href="#structure" @click="currentSection = 'structure'" :class="currentSection === 'structure' ? 'active' : ''" class="sidebar-item">Project Structure</a>
+                        <a href="#deploy-zip" @click="currentSection = 'deploy-zip'" :class="currentSection === 'deploy-zip' ? 'active' : ''" class="sidebar-item">Deploy via ZIP</a>
+                        <a href="#deploy-git" @click="currentSection = 'deploy-git'" :class="currentSection === 'deploy-git' ? 'active' : ''" class="sidebar-item">Deploy via GitHub</a>
+                        <a href="#faq" @click="currentSection = 'faq'" :class="currentSection === 'faq' ? 'active' : ''" class="sidebar-item">FAQs</a>
+                    </nav>
+                </div>
+            </div>
+        </aside>
+
+        {{-- CONTENT --}}
+        <main class="flex-1 min-w-0 docs-section">
+            
+            <section id="intro" class="mb-24 scroll-mt-24">
+                <h2>Introduction</h2>
+                <p>w3site.id is a specialized hosting platform designed for **static websites**. Focus on building your digital experience, and let our infrastructure handle the global delivery. We provide free subdomains, automatic SSL, and lightning-fast deployments.</p>
+                <div class="p-6 bg-zinc-50 border border-zinc-200 rounded-3xl">
+                    <p class="text-[14px] text-zinc-500 font-medium mb-0 leading-relaxed"><i class="fa-solid fa-circle-info mr-2 text-zinc-400"></i>Static sites are built from HTML, CSS, and JS. We do not support server-side environments like PHP, Node.js runtime, or Python.</p>
+                </div>
+            </section>
+
+            <section id="structure" class="mb-24 scroll-mt-24">
+                <h2>Project Structure</h2>
+                <p>For a successful deployment, your main entry point must be named <span class="font-mono text-black bg-zinc-100 px-2 py-0.5 rounded-md font-bold">index.html</span> and must reside at the very root of your project directory.</p>
+                <div class="code-block shadow-sm">
+                    my-website/<br>
+                    ├── index.html <span class="text-zinc-300 font-bold ml-2">// Required Entry Point</span><br>
+                    ├── styles.css<br>
+                    ├── main.js<br>
+                    └── assets/<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;└── logo.png
+                </div>
+            </section>
+
+            <section id="deploy-zip" class="mb-24 scroll-mt-24">
+                <h2>Deploy via ZIP</h2>
+                <p>The fastest way to take your project live. Perfect for manual testing, portfolios, or completed client hand-overs.</p>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center shrink-0 text-black font-black text-xs">1</div>
+                        <p class="text-[15px] text-zinc-600 font-medium">Select all project files (not the parent folder) and compress them into a <span class="font-bold text-black">.zip</span> bundle.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center shrink-0 text-black font-black text-xs">2</div>
+                        <p class="text-[15px] text-zinc-600 font-medium">Open your dashboard, reserve a name, and upload your ZIP file.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center shrink-0 text-black font-black text-xs">3</div>
+                        <p class="text-[15px] text-zinc-600 font-medium">Your site is live instantly at <span class="font-bold text-black underline">your-name.w3site.id</span>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="deploy-git" class="mb-24 scroll-mt-24">
+                <h2>Deploy via GitHub</h2>
+                <p>Connect any public repository for a more streamlined workflow. You can trigger updates directly from your dashboard whenever you push new changes.</p>
+                <div class="p-8 border border-zinc-200 rounded-[32px] bg-zinc-50/50">
+                    <h4 class="text-[14px] font-black text-black mb-4">How to obtain Repository URL:</h4>
+                    <p class="text-[14px] text-zinc-500 font-medium mb-6">Navigate to your GitHub repository and copy the HTTPS clone URL.</p>
+                    <div class="bg-white border border-zinc-200 p-4 rounded-2xl font-mono text-[13px] text-zinc-600 overflow-x-auto shadow-sm">
+                        https://github.com/username/project-name.git
+                    </div>
+                    <p class="mt-8 text-[12px] font-bold text-zinc-400 italic"><i class="fa-solid fa-lock mr-2"></i>Note: We currently only support Public Repositories.</p>
+                </div>
+            </section>
+
+
+            <section id="faq" class="mb-32 scroll-mt-24">
+                <h2>FAQs</h2>
+                <div class="space-y-4 mt-8">
+                    <div class="border border-zinc-200 rounded-[24px] overflow-hidden transition-all hover:border-black" x-data="{ open: false }">
+                        <button @click="open = !open" class="w-full px-8 py-5 text-left text-[16px] font-black hover:bg-zinc-50/50 flex justify-between items-center transition-colors">
+                            Why do I see a 404 error?
+                            <i class="fa-solid fa-chevron-down text-[10px] transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open" x-cloak class="px-8 py-6 border-t border-zinc-200 text-[15px] text-zinc-500 font-medium leading-relaxed bg-zinc-50/30">
+                            This typically occurs if your <span class="font-bold text-black">index.html</span> is not located at the root of your project. Check if your files are nested inside another subfolder within the ZIP bundle.
+                        </div>
+                    </div>
+                    <div class="border border-zinc-200 rounded-[24px] overflow-hidden transition-all hover:border-black" x-data="{ open: false }">
+                        <button @click="open = !open" class="w-full px-8 py-5 text-left text-[16px] font-black hover:bg-zinc-50/50 flex justify-between items-center transition-colors">
+                            Do you support PHP?
+                            <i class="fa-solid fa-chevron-down text-[10px] transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open" x-cloak class="px-8 py-6 border-t border-zinc-200 text-[15px] text-zinc-500 font-medium leading-relaxed bg-zinc-50/30">
+                            No. w3site.id is dedicated to static hosting. If your project requires a backend, we recommend integrating with a BaaS provider such as Supabase or Firebase via their JS SDK.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
     </div>
 
-    <footer class="bg-white border-t border-slate-100 py-12 text-center">
-        <p class="text-[10px] font-black text-slate-400 tracking-widest uppercase">&copy; 2026 w3site.id — Memajukan Web Indonesia</p>
+    <footer class="py-16 border-t border-[#eaeaea]">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex items-center gap-3">
+                <span class="flex items-center justify-center border-2 border-black rounded w-7 h-7 font-black text-[14px] tracking-tighter">w</span>
+                <span class="text-[12px] font-bold text-zinc-400">&copy; 2026 w3site.id — Static Hosting Forever</span>
+            </div>
+            <div class="flex items-center gap-8">
+                <a href="#" class="text-[13px] font-bold text-zinc-400 hover:text-black transition-colors">Twitter</a>
+                <a href="#" class="text-[13px] font-bold text-zinc-400 hover:text-black transition-colors">GitHub</a>
+                <a href="mailto:hello@w3site.id" class="text-[13px] font-bold text-zinc-400 hover:text-black transition-colors">Support</a>
+            </div>
+        </div>
     </footer>
 
     <script>
-        window.addEventListener('scroll', () => {
-            let current = '';
+        document.addEventListener('scroll', () => {
             const sections = document.querySelectorAll('section');
+            let current = '';
             sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 150) {
-                    current = section.getAttribute('id');
-                }
+                const top = section.offsetTop;
+                if (window.pageYOffset >= top - 150) current = section.getAttribute('id');
             });
-            document.querySelectorAll('.sidebar-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').includes(current)) {
-                    link.classList.add('active');
-                }
-            });
+            // Update UI/Alpine state if needed or simply use CSS scroll-spy
         });
     </script>
 </body>

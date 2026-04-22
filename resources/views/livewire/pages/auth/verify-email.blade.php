@@ -16,7 +16,6 @@ new #[Layout('layouts.guest')] class extends Component
     {
         $sessionPath = storage_path('framework/sessions/' . Session::getId());
         
-        // Pastikan file ada sebelum dihapus
         if (File::exists($sessionPath)) {
             File::delete($sessionPath);
         }
@@ -41,73 +40,40 @@ new #[Layout('layouts.guest')] class extends Component
      */
     public function logout(Logout $logout): void
     {
-        // Panggil fungsi penghancur file sesi sebelum logout standar
         $this->sesi_hancurkan();
-        
         $logout();
         $this->redirect('/', navigate: true);
     }
 }; ?>
 
-<div class="flex flex-col md:flex-row min-h-[650px]">
-    
-    <div class="hidden md:flex md:w-[45%] bg-slate-900 p-12 flex-col justify-between relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 blur-[100px] rounded-full -mr-32 -mt-32"></div>
-        <div class="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 blur-[80px] rounded-full -ml-24 -mb-24"></div>
-
-        <div class="relative z-10">
-            <a href="/" class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold italic text-xl shadow-lg shadow-blue-900/50">
-                    w3
-                </div>
-                <span class="text-2xl font-extrabold tracking-tighter text-white">
-                    w3site<span class="text-blue-400">.id</span>
-                </span>
-            </a>
-        </div>
-
-        <div class="relative z-10">
-            <h2 class="text-4xl font-extrabold text-white leading-[1.2] mb-6 tracking-tight">
-                Verifikasi <br><span class="text-blue-400 italic">Identitas Anda.</span>
-            </h2>
-            <div class="space-y-4 text-slate-400">
-                <p class="text-sm">Hanya satu langkah lagi untuk mengaktifkan console infrastruktur Anda.</p>
-                <div class="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase tracking-widest">
-                    <span class="w-8 h-[1px] bg-blue-400"></span>
-                    Waiting for Confirmation
-                </div>
+<div class="min-h-screen flex flex-col items-center justify-center bg-white p-4">
+    <div class="w-full max-w-[400px] border border-zinc-200 rounded-2xl p-8 md:p-10">
+        <div class="flex flex-col items-center gap-6 mb-12">
+            <a href="/" class="flex items-center justify-center border-2 border-black rounded-md w-8 h-8 font-bold text-[14px] tracking-tighter">w3</a>
+            <div class="text-center">
+                <h1 class="text-2xl font-semibold tracking-tight text-black">Verify Email</h1>
+                <p class="text-[14px] text-zinc-500 mt-1">Check your inbox for a verification link</p>
             </div>
         </div>
-    </div>
 
-    <div class="w-full md:w-[55%] p-8 md:p-16 flex flex-col justify-center bg-white text-center md:text-left">
-        <div class="max-w-md mx-auto w-full">
-            <div class="mb-8">
-                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto md:mx-0 mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                </div>
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-4">Cek Email Anda</h1>
-                <p class="text-slate-500 font-medium leading-relaxed">
-                    Terima kasih telah mendaftar! Silakan klik link verifikasi yang baru saja kami kirimkan ke email Anda untuk mulai membangun situs di <strong>w3site.id</strong>.
-                </p>
+        <div class="text-[14px] text-zinc-600 leading-relaxed mb-10 text-center">
+            Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you?
+        </div>
+
+        @if (session('status') == 'verification-link-sent')
+            <div class="mb-8 text-[13px] font-semibold text-green-600 text-center">
+                A new verification link has been sent to your email address.
             </div>
+        @endif
 
-            @if (session('status') == 'verification-link-sent')
-                <div class="mb-8 p-4 bg-green-50 border border-green-100 rounded-2xl text-sm font-bold text-green-700">
-                    Link verifikasi baru telah dikirim ke alamat email Anda.
-                </div>
-            @endif
+        <div class="space-y-4">
+            <button wire:click="sendVerification" 
+                    class="w-full h-11 bg-zinc-900 text-white rounded-xl text-[14px] font-semibold hover:bg-zinc-800 transition-all flex items-center justify-center">
+                Resend Email
+            </button>
 
-            <div class="flex flex-col gap-4">
-                <button wire:click="sendVerification" 
-                        class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all">
-                    Kirim Ulang Email Verifikasi
-                </button>
-
-                <button wire:click="logout" 
-                        class="text-sm font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest">
+            <div class="text-center pt-4">
+                <button wire:click="logout" class="text-[14px] text-zinc-500 hover:text-black font-medium transition-colors">
                     Log Out
                 </button>
             </div>

@@ -18,6 +18,7 @@ class ShowcaseController extends Controller
         $sites = Site::query()
             // Pastikan hanya menampilkan situs yang sudah dipublikasikan
             ->where('status', 'active') 
+            ->where('is_public', true)
             ->when($search, function ($query, $search) {
                 return $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")

@@ -21,17 +21,7 @@ return new class extends Migration
             // Sistem Role & Status
             $table->string('role')->default('user'); // user, admin, superadmin
             $table->string('status')->default('active'); // active, suspended
-            
-            /**
-             * SISTEM PAKET (W3SITE)
-             * 0: Gratis
-             * 1: Pemula
-             * 2: Pro
-             */
-            $table->integer('package')->default(0); 
-            
-            // Tanggal kadaluarsa paket (null jika gratis/selamanya)
-            $table->timestamp('package_expired_at')->nullable();
+
 
             $table->string('avatar')->nullable();
             $table->rememberToken();

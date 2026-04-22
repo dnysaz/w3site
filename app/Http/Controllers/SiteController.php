@@ -61,22 +61,15 @@ class SiteController extends Controller
                 Rule::notIn($bannedWords),
             ],
         ], [
-            'subdomain.not_in' => 'Mohon gunakan nama situs lain!',
-            'subdomain.alpha_dash' => 'Subdomain hanya boleh berisi huruf, angka, dan strip.',
-            'subdomain.unique' => 'Subdomain ini sudah digunakan.',
+            'subdomain.not_in' => 'Please use another site name!',
+            'subdomain.alpha_dash' => 'Subdomain can only contain letters, numbers, and hyphens.',
+            'subdomain.unique' => 'This subdomain is already in use.',
         ]);
 
         $user = Auth::user();
         $subdomain = strtolower($request->subdomain);
 
-        // Map limit berdasarkan database integer (0: Gratis, 1: Pemula, 2: Pro)
-        $limits = [0 => 2, 1 => 10, 2 => 20];
-        $limit = $limits[$user->package] ?? 2;
-
-        if ($user->sites()->count() >= $limit) {
-            return response()->json(['message' => 'Slot situs penuh! Silakan upgrade paket.'], 403);
-        }
-
+        // Limit is removed. Everyone can make unlimited sites.
         // Catat di DB dengan status 'pending'
         $site = $user->sites()->create([
             'name'        => $subdomain,
@@ -86,7 +79,7 @@ class SiteController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Nama situs berhasil dipesan!',
+            'message' => 'Site name successfully reserved!',
             'site_id' => $site->id
         ], 200);
     }
@@ -100,7 +93,7 @@ class SiteController extends Controller
     {
         $request->validate([
             'subdomain' => 'required|exists:sites,subdomain',
-            'file'      => 'required|mimes:zip|max:51200', // Max 50MB
+            'file'      => 'required|mimes:zip|max:524288', // Max 512MB
         ]);
 
         $subdomain = strtolower($request->subdomain);
@@ -116,13 +109,13 @@ class SiteController extends Controller
                 if (preg_match('/\.php($|\.)/i', $filename)) {
                     $zip->close();
                     return response()->json([
-                        'message' => 'Gagal! Untuk saat ini w3site belum mendukung file .php'
+                        'message' => 'Failed! w3site does not support .php files.'
                     ], 422);
                 }
             }
             $zip->close();
         } else {
-            return response()->json(['message' => 'Format ZIP rusak atau tidak bisa dibaca.'], 422);
+            return response()->json(['message' => 'ZIP format is corrupted or unreadable.'], 422);
         }
 
         // Persiapan Path Transit
@@ -135,6 +128,23 @@ class SiteController extends Controller
         $request->file('file')->move($tempDir, $fileName);
         $absoluteZipPath = $tempDir . DIRECTORY_SEPARATOR . $fileName;
 
+        // Cek Kuota 512MB
+        $wwwPath = dirname(base_path());
+        $userTotalBytes = 0;
+        foreach (Auth::user()->sites as $s) {
+            $sitePath = $wwwPath . DIRECTORY_SEPARATOR . 'users-data' . DIRECTORY_SEPARATOR . $s->subdomain;
+            if (File::exists($sitePath)) {
+                foreach (File::allFiles($sitePath) as $f) {
+                    $userTotalBytes += $f->getSize();
+                }
+            }
+        }
+        
+        if ($userTotalBytes + File::size($absoluteZipPath) > 536870912) { // 512 MB
+            File::delete($absoluteZipPath);
+            return response()->json(['message' => 'Failed! Maximum storage limit of 512MB reached.'], 403);
+        }
+
         // Jalankan Bridge Script (deploy.php)
         $scriptPath = base_path('server' . DIRECTORY_SEPARATOR . 'deploy.php');
         $process = new Process(['php', $scriptPath, $subdomain, $absoluteZipPath]);
@@ -145,7 +155,7 @@ class SiteController extends Controller
 
         if (!$process->isSuccessful() || $output !== 'SUCCESS') {
             if (File::exists($absoluteZipPath)) File::delete($absoluteZipPath);
-            return response()->json(['message' => 'Gagal deploy file: ' . $output], 500);
+            return response()->json(['message' => 'Deployment failed: ' . $output], 500);
         }
 
         // Update status di DB
@@ -157,85 +167,10 @@ class SiteController extends Controller
             'status'      => 'active'
         ]);
 
-        return response()->json(['message' => 'File berhasil dideploy!']);
+        return response()->json(['message' => 'File successfully deployed!']);
     }
 
 
-    public function deployFromAi(Request $request)
-    {
-        try {
-            // 1. Validasi
-            $request->validate([
-                'subdomain'   => 'required|exists:sites,subdomain',
-                'design_path' => 'required',
-            ]);
-    
-            $subdomain = strtolower($request->subdomain);
-            $site = Site::where('subdomain', $subdomain)->where('user_id', auth()->id())->firstOrFail();
-    
-            // 2. Ambil Konten HTML
-            if (!Storage::disk('public')->exists($request->design_path)) {
-                return response()->json(['message' => 'File desain asli tidak ditemukan di storage.'], 404);
-            }
-            $htmlContent = Storage::disk('public')->get($request->design_path);
-    
-            // 3. Persiapan Path Transit
-            $tempDir = base_path('server' . DIRECTORY_SEPARATOR . 'temp');
-            if (!File::exists($tempDir)) {
-                File::makeDirectory($tempDir, 0777, true);
-            }
-    
-            $fileName = 'ai_' . time() . '_' . $subdomain . '.zip';
-            $absoluteZipPath = $tempDir . DIRECTORY_SEPARATOR . $fileName;
-    
-            // 4. BUAT ZIP (Cek apakah Class ZipArchive ada)
-            if (!class_exists('ZipArchive')) {
-                return response()->json(['message' => 'Ekstensi PHP ZipArchive tidak aktif di server ini.'], 500);
-            }
-    
-            $zip = new \ZipArchive();
-            if ($zip->open($absoluteZipPath, \ZipArchive::CREATE) === TRUE) {
-                $zip->addFromString('index.html', $htmlContent);
-                $zip->close();
-            } else {
-                return response()->json(['message' => 'Gagal membuat paket ZIP sementara.'], 500);
-            }
-    
-            // 5. Jalankan Bridge Script (deploy.php)
-            $scriptPath = base_path('server' . DIRECTORY_SEPARATOR . 'deploy.php');
-            
-            // Pastikan Symfony Process tersedia
-            $process = new Process(['php', $scriptPath, $subdomain, $absoluteZipPath]);
-            $process->setTimeout(180);
-            $process->run();
-    
-            $output = trim($process->getOutput());
-    
-            if (!$process->isSuccessful() || $output !== 'SUCCESS') {
-                return response()->json([
-                    'message' => 'Script deploy gagal.',
-                    'debug' => $process->getErrorOutput() ?: $output
-                ], 500);
-            }
-    
-            // 7. Update status di DB
-            $wwwPath = dirname(base_path()); 
-            $finalPath = $wwwPath . DIRECTORY_SEPARATOR . 'users-data' . DIRECTORY_SEPARATOR . $subdomain;
-    
-            $site->update([
-                'folder_path' => $finalPath,
-                'status'      => 'active'
-            ]);
-    
-            return response()->json(['message' => 'Berhasil! Landing page telah terpasang.']);
-    
-        } catch (\Exception $e) {
-            // Ini akan menangkap error apa pun dan mengirimkannya ke frontend (bukan sekadar 500 kosong)
-            return response()->json([
-                'message' => 'Terjadi kesalahan internal: ' . $e->getMessage()
-            ], 500);
-        }
-    }
 
     /**
      * PROSES 3: Sesi Hancurkan (Delete)
@@ -259,9 +194,9 @@ class SiteController extends Controller
             // Hapus record di database
             $site->delete();
 
-            return response()->json(['message' => 'Situs dan file berhasil dihancurkan!']);
+            return response()->json(['message' => 'Site and files successfully deleted!']);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Gagal menghapus situs.'], 500);
+            return response()->json(['message' => 'Failed to delete site.'], 500);
         }
     }
 
@@ -313,5 +248,22 @@ class SiteController extends Controller
             'chartLabels', 
             'chartData'
         ));
+    }
+
+    /**
+     * TOGGLE: Public / Private for Showcase
+     */
+    public function togglePublic(Request $request, $id)
+    {
+        $site = Site::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        
+        $site->update([
+            'is_public' => !$site->is_public
+        ]);
+
+        return response()->json([
+            'message' => $site->is_public ? 'Your site is now visible on showcase!' : 'Your site is now hidden from showcase.',
+            'is_public' => $site->is_public
+        ]);
     }
 }

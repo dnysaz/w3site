@@ -5,9 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Site;
-use App\Models\Linktree;
-use App\Models\Shortlink;
-use App\Models\Transaction;
 use App\Models\VisitLog; 
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -60,10 +57,7 @@ class AdminDashboardController extends Controller
         // 1. Statistik Utama (Cards)
         $stats = [
             'total_users'      => User::count() ?: 0,
-            'total_revenue'    => Transaction::whereIn('transaction_status', ['settlement', 'capture'])->sum('amount') ?: 0,
             'total_sites'      => Site::count() ?: 0,
-            'total_linktrees'  => Linktree::count() ?: 0,
-            'total_shortlinks' => Shortlink::count() ?: 0,
             'total_visits'     => VisitLog::count() ?: 0,
         ];
 
@@ -116,13 +110,7 @@ class AdminDashboardController extends Controller
             ->get();
 
         // 6. Data List Terbaru
-        $latest_transactions = Transaction::with('user')
-            ->whereIn('transaction_status', ['settlement', 'capture', 'success'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $latest_visits = VisitLog::latest()->take(5)->get();
+        $latest_visits = VisitLog::latest()->take(10)->get();
 
         // Kirim $serverStats ke view
         return view('admin-dashboard.dashboard', compact(
@@ -133,7 +121,6 @@ class AdminDashboardController extends Controller
             'visitorChartData',
             'topCountries', 
             'topBrowsers', 
-            'latest_transactions',
             'latest_visits',
             'serverStats' 
         ));

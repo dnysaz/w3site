@@ -1,104 +1,93 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang Kami - w3site.id</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/png" href="{{ asset('favicon.png') }}"><link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>About Us — w3site.id</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { font-family: 'Geist', 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-white antialiased">
+<body class="bg-white text-[#171717] antialiased">
 
-    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black italic text-sm">w3</div>
-                <span class="text-xl font-black tracking-tighter text-slate-900">w3site<span class="text-blue-600">.id</span></span>
-            </a>
-            <a href="/" class="text-xs font-black tracking-widest text-slate-400 hover:text-blue-600 transition-colors">Kembali</a>
-        </div>
-    </nav>
+    <header class="sticky top-0 z-[100] bg-white/70 backdrop-blur-xl border-b border-[#eaeaea]">
+        <nav class="max-w-7xl mx-auto px-6 h-14 flex justify-between items-center">
+            <div class="flex items-center gap-8">
+                <a href="/" class="flex items-center gap-2 group">
+                    <span class="flex items-center justify-center border-2 border-black rounded w-6 h-6 font-bold text-[13px] tracking-tighter group-hover:bg-black group-hover:text-white transition-all">w</span>
+                    <span class="text-sm font-bold tracking-tight">w3site<span class="text-zinc-400">.id</span></span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="/#features" class="text-[13px] text-[#666] hover:text-black transition-colors">Features</a>
+                    <a href="{{ route('showcase.index') }}" class="text-[13px] text-[#666] hover:text-black transition-colors">Showcase</a>
+                    <a href="{{ route('docs.index') }}" class="text-[13px] text-[#666] hover:text-black transition-colors">Docs</a>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                @auth
+                    <a href="{{ route('dashboard') }}" class="text-[13px] font-bold px-5 h-9 flex items-center bg-black text-white rounded-full hover:bg-zinc-800 transition-all">Dashboard</a>
+                @else
+                    <a href="{{ route('login') }}" class="text-[13px] font-bold text-[#666] hover:text-black transition-colors">Log In</a>
+                    <a href="{{ route('register') }}" class="text-[13px] font-bold px-5 h-9 flex items-center bg-black text-white rounded-full hover:bg-zinc-800 transition-all">Sign Up</a>
+                @endauth
+            </div>
+        </nav>
+    </header>
 
-    <main class="relative pt-40 pb-24 overflow-hidden">
+    <main class="max-w-[700px] mx-auto px-6 py-24">
+        <p class="text-[12px] font-bold text-zinc-400 tracking-[0.2em] mb-4">Our Mission</p>
+        <h1 class="text-[48px] md:text-[64px] font-black tracking-tight mb-10 leading-[1]">Empowering creators with <span class="text-zinc-400">limitless possibilities.</span></h1>
         
-        <div class="absolute top-20 left-1/2 -translate-x-1/2 select-none pointer-events-none z-0">
-            <h1 class="text-[15rem] md:text-[30rem] font-[1000] text-slate-50 tracking-tighter leading-none italic">
-                ABOUT
-            </h1>
+        <div class="prose prose-zinc prose-sm">
+            <p class="text-[18px] text-[#666] font-medium leading-relaxed mb-10">
+                In a digital-first world, having an online presence is no longer a luxury—it's a necessity. w3site.id was founded to ensure that technical barriers and costs never stand in the way of your dreams.
+            </p>
+
+            <h3 class="text-[20px] font-black mt-16 mb-6">Space to Grow</h3>
+            <p class="text-[16px] text-[#666] leading-relaxed mb-8">
+                Many developers, students, and small business owners have great ideas but are often hindered by complex hosting environments or high monthly fees. We break those barriers by providing a platform where you can go live in seconds, for free.
+            </p>
+
+            <div class="grid grid-cols-2 gap-8 my-16 py-10 border-y border-[#eaeaea]">
+                <div>
+                    <span class="block text-[32px] font-black leading-none mb-1">Free</span>
+                    <span class="text-[11px] font-bold text-zinc-400 tracking-widest">For Learning</span>
+                </div>
+                <div>
+                    <span class="block text-[32px] font-black leading-none mb-1">Open</span>
+                    <span class="text-[11px] font-bold text-zinc-400 tracking-widest">For Everyone</span>
+                </div>
+            </div>
+
+            <h3 class="text-[20px] font-black mt-16 mb-6">Modern Infrastructure</h3>
+            <p class="text-[16px] text-[#666] leading-relaxed mb-16">
+                We provide a robust, secure, and high-performance environment for your static projects. Whether it's a personal portfolio or a business landing page, your content is safe and accessible globally.
+            </p>
         </div>
 
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="max-w-5xl mb-24">
-                <p class="text-[10px] font-black text-blue-600 tracking-[0.5em] mb-6">Misi Kami</p>
-                <h2 class="text-6xl md:text-8xl font-[1000] text-slate-900 tracking-tighter italic leading-[0.9]">
-                    Kreativitas <span class="text-blue-600">Tanpa Batas.</span>
-                </h2>
-                <p class="mt-8 text-xl text-slate-500 font-medium leading-relaxed max-w-4xl">
-                    Di era kecerdasan buatan (AI) yang serba cepat ini, memiliki kehadiran online bukan lagi sebuah kemewahan, melainkan kebutuhan. Kami hadir untuk memastikan biaya tidak pernah menjadi penghalang impianmu.
-                </p>
+        <div class="mt-32 pt-16 border-t border-[#eaeaea] grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+                <h4 class="text-[17px] font-black mb-3">For Freelancers</h4>
+                <p class="text-[14px] text-[#666] leading-relaxed font-medium">Showcase your portfolio professionally without worrying about monthly costs.</p>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-32">
-                
-                <div class="md:col-span-7 bg-slate-900 rounded-[3rem] p-10 md:p-14 text-white relative overflow-hidden group">
-                    <div class="relative z-10">
-                        <h3 class="text-3xl font-[1000] italic mb-6 text-blue-500">Memberi Ruang Bertumbuh</h3>
-                        <p class="text-slate-300 text-lg leading-relaxed mb-8">
-                            Banyak anak muda, freelancer, dan UMKM memiliki ide hebat namun terhenti karena biaya hosting yang mahal atau teknis yang rumit. 
-                            <br><br>
-                            w3site.id mendobrak batasan itu. Kami menyediakan platform di mana kamu bisa meng-online-kan karyamu secara gratis atau dengan biaya yang sangat terjangkau, tanpa mengorbankan kualitas teknologi.
-                        </p>
-                        <div class="flex gap-8">
-                            <div>
-                                <span class="block text-2xl font-black italic text-white">Gratis</span>
-                                <span class="text-[9px] font-bold text-slate-500 tracking-widest uppercase">Untuk Belajar</span>
-                            </div>
-                            <div>
-                                <span class="block text-2xl font-black italic text-white">Terbuka</span>
-                                <span class="text-[9px] font-bold text-slate-500 tracking-widest uppercase">Untuk Semua</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="md:col-span-5 bg-blue-600 rounded-[3rem] p-10 md:p-14 text-white flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-3xl font-[1000] italic mb-6">Era AI, Era Kamu</h3>
-                        <p class="text-blue-50 font-medium leading-relaxed">
-                            Teknologi AI telah memudahkan pembuatan konten, dan kami menyediakan "rumah" terbaik untuk konten tersebut. Performa tinggi, aman, dan siap diakses dunia.
-                        </p>
-                    </div>
-                    <div class="mt-8">
-                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-[10px] font-bold tracking-widest uppercase">
-                            <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                            Infrastruktur Modern
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <h4 class="text-[17px] font-black mb-3">For Students</h4>
+                <p class="text-[14px] text-[#666] leading-relaxed font-medium">Perfect for learning web development and hosting your school projects.</p>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-slate-100 pt-20">
-                <div>
-                    <h4 class="text-xl font-black italic mb-3">Bagi Freelancer</h4>
-                    <p class="text-slate-500 leading-relaxed text-sm">Tampilkan portofolio terbaikmu secara profesional tanpa perlu pusing memikirkan biaya bulanan yang membengkak.</p>
-                </div>
-                <div>
-                    <h4 class="text-xl font-black italic mb-3">Bagi UMKM</h4>
-                    <p class="text-slate-500 leading-relaxed text-sm">Go-digital jadi lebih nyata. Fokus kembangkan bisnismu, biar teknologi kami yang dukung eksistensi onlinemu.</p>
-                </div>
-                <div>
-                    <h4 class="text-xl font-black italic mb-3">Bagi Kreator Muda</h4>
-                    <p class="text-slate-500 leading-relaxed text-sm">Jangan biarkan ide besarmu hanya tersimpan di komputer. Publish sekarang dan biarkan dunia melihat kreativitasmu.</p>
-                </div>
+            <div>
+                <h4 class="text-[17px] font-black mb-3">For Small Biz</h4>
+                <p class="text-[14px] text-[#666] leading-relaxed font-medium">Go digital today. Focus on your business while we handle your web presence.</p>
             </div>
         </div>
     </main>
 
-    <footer class="bg-white border-t border-slate-100 py-12 text-center">
-        <p class="text-[10px] font-black text-slate-400 tracking-widest">&copy; 2026 w3site.id — Memajukan Kreativitas Indonesia</p>
+    <footer class="py-16 border-t border-[#eaeaea] text-center">
+        <p class="text-[12px] font-bold text-[#999]">&copy; 2026 w3site.id — Empowering the Web</p>
     </footer>
 
 </body>

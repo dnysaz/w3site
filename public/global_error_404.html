@@ -1,57 +1,65 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Situs Sedang Disiapkan - W3SITE.id</title>
+    <title>Getting Ready — w3site.id</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://w3site.id/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        body { font-family: 'Geist', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 flex items-center justify-center min-h-screen p-6">
+<body class="bg-white text-black antialiased">
 
-    <div class="max-w-md w-full text-center">
-        <div class="relative">
-            <div class="absolute inset-0 bg-blue-200 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-            <div class="relative inline-flex items-center justify-center">
-                <img src="https://raw.githubusercontent.com/dnysaz/images/main/1.png" alt="w3site.id" width="140">
-            </div>
-        </div>
-
-        <h1 class="text-3xl font-bold text-slate-800 mb-3">Situs Sedang Disiapkan</h1>
-        <p class="text-slate-600 mb-8 leading-relaxed">
-            Kabar baik! Alamat ini sudah dipesan melalui <span class="font-semibold text-blue-600">w3site.id</span>. Saat ini pemilik situs sedang mempersiapkan konten terbaik untuk Anda.
-        </p>
-
-        <div class="glass border border-white rounded-2xl p-6 shadow-sm mb-8">
-            <div class="flex items-center space-x-4 text-left">
-                <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                    <i class="fa-solid fa-check text-sm"></i>
-                </div>
-                <div>
-                    <h3 class="text-sm font-bold text-slate-800">Domain Terverifikasi</h3>
-                    <p class="text-xs text-slate-500 italic">Menunggu publikasi file index...</p>
+    <div class="min-h-screen flex items-center justify-center p-6 text-center">
+        <div class="max-w-[440px] w-full">
+            
+            {{-- Branded Icon --}}
+            <div class="mb-10 flex justify-center">
+                <div class="w-16 h-16 bg-black rounded-[20px] flex items-center justify-center text-white text-2xl font-black tracking-tighter transform hover:scale-110 transition-transform duration-500 shadow-xl shadow-black/10">
+                    w3
                 </div>
             </div>
-        </div>
 
-        <div class="space-y-4">
-            <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">Mau buat website seperti ini?</p>
-            <a href="https://w3site.id" class="inline-flex items-center px-6 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-blue-600 transition-all duration-300 shadow-lg hover:shadow-blue-200 group">
-                Mulai Buat Website
-                <i class="fa-solid fa-arrow-right ml-2 text-xs transition-transform group-hover:translate-x-1"></i>
-            </a>
-        </div>
-
-        <footer class="mt-12 pt-8 border-t border-slate-200">
-            <p class="text-sm text-slate-400">
-                &copy; 2026 w3site.id — Buat Website Gak Pake Ribet!
+            <h1 class="text-[32px] font-black tracking-tight mb-4 leading-tight">Getting <span class="text-zinc-400">ready.</span></h1>
+            <p class="text-[15px] font-medium text-zinc-500 leading-relaxed mb-10">
+                Good news! This address has been reserved via <span class="font-bold text-black">w3site.id</span>. 
+                The owner is currently preparing something great for you.
             </p>
-        </footer>
+
+            {{-- Verified Badge --}}
+            <div class="bg-zinc-50 border border-zinc-100 rounded-[24px] p-6 mb-10">
+                <div class="flex items-center gap-4 text-left">
+                    <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-500 shrink-0">
+                        <i class="fa-solid fa-check text-xs"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-[14px] font-bold text-black">Domain Verified</h3>
+                        <p class="text-[12px] font-medium text-zinc-400">Waiting for site publication...</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- CTA --}}
+            <div class="space-y-6">
+                <p class="text-[11px] font-black text-zinc-300 uppercase tracking-[0.2em]">Want a site like this?</p>
+                <a href="https://w3site.id" class="inline-flex h-12 items-center px-8 bg-black text-white text-[14px] font-bold rounded-full hover:bg-zinc-800 transition-all shadow-lg shadow-black/5 group">
+                    Build Your Website
+                    <i class="fa-solid fa-arrow-right ml-3 text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+
+            <footer class="mt-20 pt-8 border-t border-zinc-50">
+                <p class="text-[11px] font-bold text-zinc-300 tracking-widest uppercase">
+                    &copy; 2026 w3site.id — Empowering the Web
+                </p>
+            </footer>
+        </div>
     </div>
 
 </body>

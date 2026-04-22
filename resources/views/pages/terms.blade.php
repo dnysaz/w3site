@@ -1,130 +1,105 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syarat & Ketentuan - w3site.id</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/png" href="{{ asset('favicon.png') }}"><link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>Terms — w3site.id</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { font-family: 'Geist', 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-white antialiased">
+<body class="bg-white text-[#171717] antialiased">
 
-    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="{{ route("home") }}" class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black italic text-sm">w3</div>
-                <span class="text-xl font-black tracking-tighter text-slate-900">w3site<span class="text-blue-600">.id</span></span>
-            </a>
-            <a href="{{ route("home") }}" class="text-xs font-black tracking-widest text-slate-400 hover:text-blue-600 transition-colors">Kembali</a>
-        </div>
-    </nav>
-
-    <main class="relative pt-40 pb-24 overflow-hidden">
-        
-        <div class="absolute top-20 left-1/2 -translate-x-1/2 select-none pointer-events-none z-0">
-            <h1 class="text-[15rem] md:text-[30rem] font-[1000] text-slate-50 tracking-tighter leading-none italic">
-                TERMS
-            </h1>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="max-w-3xl mb-24">
-                <p class="text-[10px] font-black text-blue-600 tracking-[0.5em] mb-6">Aturan Main</p>
-                <h2 class="text-6xl md:text-8xl font-[1000] text-slate-900 tracking-tighter italic leading-[0.9]">
-                    Syarat & <span class="text-blue-600">Ketentuan.</span>
-                </h2>
-                <p class="mt-8 text-lg text-slate-500 font-medium leading-relaxed">
-                    Kami ingin menjaga ekosistem ini tetap aman dan nyaman bagi semua orang. Harap baca aturan penggunaan layanan kami di bawah ini.
-                </p>
+    <header class="sticky top-0 z-[100] bg-white/70 backdrop-blur-xl border-b border-[#eaeaea]">
+        <nav class="max-w-7xl mx-auto px-6 h-14 flex justify-between items-center">
+            <div class="flex items-center gap-8">
+                <a href="/" class="flex items-center gap-2 group">
+                    <span class="flex items-center justify-center border-2 border-black rounded w-6 h-6 font-bold text-[13px] tracking-tighter group-hover:bg-black group-hover:text-white transition-all">w</span>
+                    <span class="text-sm font-bold tracking-tight">w3site<span class="text-zinc-400">.id</span></span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="/#features" class="text-[13px] text-[#666] hover:text-black transition-colors">Features</a>
+                    <a href="{{ route('showcase.index') }}" class="text-[13px] text-[#666] hover:text-black transition-colors">Showcase</a>
+                    <a href="{{ route('docs.index') }}" class="text-[13px] text-[#666] hover:text-black transition-colors">Docs</a>
+                </div>
             </div>
+            <div class="flex items-center gap-4">
+                @auth
+                    <a href="{{ route('dashboard') }}" class="text-[13px] font-bold px-5 h-9 flex items-center bg-black text-white rounded-full hover:bg-zinc-800 transition-all">Dashboard</a>
+                @else
+                    <a href="{{ route('login') }}" class="text-[13px] font-bold text-[#666] hover:text-black transition-colors">Log In</a>
+                    <a href="{{ route('register') }}" class="text-[13px] font-bold px-5 h-9 flex items-center bg-black text-white rounded-full hover:bg-zinc-800 transition-all">Sign Up</a>
+                @endauth
+            </div>
+        </nav>
+    </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-32">
-                
-                <div class="md:col-span-4">
-                    <div class="sticky top-32 space-y-8">
-                        <div class="bg-slate-50 rounded-[2rem] p-8 border border-slate-100">
-                            <h3 class="text-sm font-black italic text-slate-900 mb-4 tracking-widest uppercase">Poin Penting</h3>
-                            <ul class="space-y-4">
-                                <li class="flex gap-3 text-xs font-bold text-slate-500 italic">
-                                    <span class="text-blue-600">01.</span> Gunakan dengan bijak
-                                </li>
-                                <li class="flex gap-3 text-xs font-bold text-slate-500 italic">
-                                    <span class="text-blue-600">02.</span> Jaga konten tetap positif
-                                </li>
-                                <li class="flex gap-3 text-xs font-bold text-slate-500 italic">
-                                    <span class="text-blue-600">03.</span> Hak cipta milik Anda
-                                </li>
-                            </ul>
-                        </div>
+    <main class="max-w-[700px] mx-auto px-6 py-24">
+        <h1 class="text-[48px] md:text-[64px] font-black tracking-tight mb-6 leading-[1]">Terms of <span class="text-zinc-400">Service.</span></h1>
+        <p class="text-[18px] text-[#666] font-medium leading-relaxed mb-16">We want to keep this ecosystem safe and professional for everyone. Please read our rules of service below.</p>
+
+        <div class="space-y-16">
+            <section>
+                <h3 class="text-[20px] font-black mb-4">1. Service Usage</h3>
+                <p class="text-[16px] text-[#666] leading-relaxed">
+                    By using w3site.id, you agree to use our services only for lawful purposes. You must not use the platform for any activities that violate local or international laws.
+                </p>
+            </section>
+
+            <section>
+                <h3 class="text-[20px] font-black mb-4">2. User Content</h3>
+                <p class="text-[16px] text-[#666] leading-relaxed mb-6">
+                    You are solely responsible for any content (text, images, code) you upload. We strictly prohibit content related to:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-[13px] font-bold text-[#666]">
+                    <div class="p-5 bg-[#fafafa] border border-[#eaeaea] rounded-2xl flex items-center gap-3">
+                         <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500"><i class="fa-solid fa-ban text-[12px]"></i></div>
+                         Gambling & Scams
+                    </div>
+                    <div class="p-5 bg-[#fafafa] border border-[#eaeaea] rounded-2xl flex items-center gap-3">
+                         <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500"><i class="fa-solid fa-copy text-[12px]"></i></div>
+                         Copyright Infringement
+                    </div>
+                    <div class="p-5 bg-[#fafafa] border border-[#eaeaea] rounded-2xl flex items-center gap-3">
+                         <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500"><i class="fa-solid fa-bullhorn text-[12px]"></i></div>
+                         Hate Speech & Harassment
+                    </div>
+                    <div class="p-5 bg-[#fafafa] border border-[#eaeaea] rounded-2xl flex items-center gap-3">
+                         <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500"><i class="fa-solid fa-user-secret text-[12px]"></i></div>
+                         Adult Content
                     </div>
                 </div>
+            </section>
 
-                <div class="md:col-span-8 space-y-16">
-                    
-                    <section>
-                        <h4 class="text-2xl font-[1000] text-slate-900 italic mb-6">1. Penggunaan Layanan</h4>
-                        <p class="text-slate-500 leading-relaxed font-medium mb-4">
-                            Dengan menggunakan w3site.id, Anda setuju untuk menggunakan layanan kami hanya untuk tujuan yang sah dan tidak melanggar hukum yang berlaku di Republik Indonesia.
-                        </p>
-                    </section>
+            <section>
+                <h3 class="text-[20px] font-black mb-4">3. Limitation of Liability</h3>
+                <p class="text-[16px] text-[#666] leading-relaxed">
+                    Our service is provided "as is". w3site.id is not responsible for any direct or indirect damages resulting from the use of our services or unexpected technical interruptions.
+                </p>
+            </section>
 
-                    <section>
-                        <h4 class="text-2xl font-[1000] text-slate-900 italic mb-6">2. Konten Pengguna</h4>
-                        <p class="text-slate-500 leading-relaxed font-medium mb-4">
-                            Anda bertanggung jawab penuh atas segala konten (teks, gambar, kode) yang Anda unggah. Kami melarang keras konten yang mengandung:
-                        </p>
-                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                            <li class="bg-slate-50 p-4 rounded-xl text-xs font-bold text-slate-600 border border-slate-100 italic">Perjudian & Penipuan</li>
-                            <li class="bg-slate-50 p-4 rounded-xl text-xs font-bold text-slate-600 border border-slate-100 italic">Pelanggaran Hak Cipta</li>
-                            <li class="bg-slate-50 p-4 rounded-xl text-xs font-bold text-slate-600 border border-slate-100 italic">SARA & Ujaran Kebencian</li>
-                            <li class="bg-slate-50 p-4 rounded-xl text-xs font-bold text-slate-600 border border-slate-100 italic">Konten Dewasa / Pornografi</li>
-                        </ul>
-                    </section>
+            <section>
+                <h3 class="text-[20px] font-black mb-4">4. Account Termination</h3>
+                <p class="text-[16px] text-[#666] leading-relaxed">
+                    We reserve the right to suspend or delete your account/site if you violate these terms, without prior notice.
+                </p>
+            </section>
+        </div>
 
-                    <section>
-                        <h4 class="text-2xl font-[1000] text-slate-900 italic mb-6">3. Batasan Tanggung Jawab</h4>
-                        <p class="text-slate-500 leading-relaxed font-medium mb-4">
-                            Layanan kami disediakan "sebagaimana adanya". w3site.id tidak bertanggung jawab atas kerugian materi maupun non-materi yang timbul akibat penggunaan layanan atau gangguan teknis yang tidak terduga.
-                        </p>
-                    </section>
-
-                    <section>
-                        <h4 class="text-2xl font-[1000] text-slate-900 italic mb-6">4. Penutupan Akun</h4>
-                        <p class="text-slate-500 leading-relaxed font-medium mb-4">
-                            Kami berhak untuk menonaktifkan atau menghapus situs Anda secara sepihak jika ditemukan pelanggaran terhadap syarat dan ketentuan ini tanpa pemberitahuan terlebih dahulu.
-                        </p>
-                    </section>
-
-                </div>
-            </div>
-
-            <div class="bg-slate-900 rounded-[3rem] p-10 md:p-16 text-white text-center relative overflow-hidden group">
-                <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl group-hover:bg-blue-600/20 transition-all duration-700"></div>
-                <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-slate-800 rounded-full blur-3xl"></div>
-            
-                <div class="relative z-10">
-                    <h3 class="text-3xl md:text-5xl font-[1000] italic tracking-tighter mb-6">
-                        Punya <span class="text-blue-500">Pertanyaan?</span>
-                    </h3>
-                    <p class="text-slate-400 font-medium mb-10 max-w-xl mx-auto italic">
-                        Jika ada bagian dari aturan ini yang kurang jelas, jangan ragu untuk menghubungi tim dukungan kami.
-                    </p>
-                    <a href="mailto:support@w3site.id" class="inline-flex items-center px-10 py-4 bg-blue-600 text-white text-xs font-black italic tracking-[0.2em] rounded-2xl hover:bg-blue-500 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                        Hubungi Support
-                    </a>
-                </div>
-            </div>
+        <div class="mt-32 p-10 border border-[#eaeaea] bg-zinc-50 rounded-[32px] text-center">
+            <h3 class="text-[20px] font-black mb-2">Have Questions?</h3>
+            <p class="text-[14px] font-medium text-[#666] mb-8">If any part of these rules is unclear, feel free to reach out to our support team.</p>
+            <a href="mailto:support@w3site.id" class="inline-flex h-12 items-center px-8 bg-black text-white text-[14px] font-bold rounded-full hover:bg-zinc-800 transition-all shadow-lg shadow-black/10">Contact Support</a>
         </div>
     </main>
 
-    <footer class="bg-white border-t border-slate-100 py-12 text-center relative z-10">
-        <p class="text-[10px] font-black text-slate-400 tracking-widest">&copy; 2026 w3site.id — Diperbarui 22 Januari 2026</p>
+    <footer class="py-16 border-t border-[#eaeaea] text-center">
+        <p class="text-[12px] font-bold text-[#999]">&copy; 2026 w3site.id — Updated January 2026</p>
     </footer>
 
 </body>
